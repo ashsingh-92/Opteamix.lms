@@ -1,10 +1,10 @@
-/* Login Page */
+/* Login Page Styling */
 body.login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #004c97; /* Opteamix blue */
+  background: #004c97; /* Opteamix Blue */
   margin: 0;
   font-family: Arial, sans-serif;
 }
