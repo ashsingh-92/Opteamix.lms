@@ -3,56 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LMS - Opteamix</title>
+  <title>LMS Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo">
-      <img src="logo.png" alt="Logo">
-      <span>Opteamix LMS</span>
-    </div>
-    <ul>
-      <li><a href="#trainings" class="active">📚 Trainings</a></li>
-      <li><a href="#suggestions">🔍 Course Suggestions</a></li>
-      <li><a href="#progress">📈 Progress</a></li>
-    </ul>
-  </nav>
+<body class="login-page">
+  <div class="login-container">
+    <img src="opteamix-logo.png" alt="Opteamix Logo" class="login-logo">
+    <h2>Login to Opteamix LMS</h2>
+    <form onsubmit="return loginUser(event)">
+      <input type="text" id="username" placeholder="Enter username" required>
+      <input type="password" id="password" placeholder="Enter password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
 
-  <!-- Header -->
-  <header class="header">
-    <h1>Learning Management System</h1>
-  </header>
-
-  <!-- Main Content -->
-  <main class="container">
-    <!-- Trainings Section -->
-    <section id="trainings" class="card">
-      <h2>📚 Available Trainings</h2>
-      <ul id="training-list">
-        <li><strong>Leadership Skills</strong> – Enrolled: John, Priya</li>
-        <li><strong>Time Management</strong> – Enrolled: Aishwarya, Raj</li>
-      </ul>
-      <input type="text" id="new-training" placeholder="Enter course name">
-      <button onclick="addTraining()">➕ Add Training</button>
-    </section>
-
-    <!-- Course Suggestions Section -->
-    <section id="suggestions" class="card">
-      <h2>🔍 Course Suggestions</h2>
-      <input type="text" id="search-input" placeholder="Search for courses (e.g., AI, Leadership)">
-      <button onclick="searchCourses()">Search</button>
-      <ul id="suggestions-list"></ul>
-    </section>
-
-    <!-- Progress Section -->
-    <section id="progress" class="card">
-      <h2>📈 Progress Tracker</h2>
-      <p>Feature coming soon 🚀</p>
-    </section>
-  </main>
-
-  <script src="app.js"></script>
+  <script>
+    function loginUser(event) {
+      event.preventDefault();
+      // Simple redirect after login
+      window.location.href = "dashboard.html";
+    }
+  </script>
 </body>
 </html>
