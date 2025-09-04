@@ -1,0 +1,117 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* -------- LOGIN PAGE -------- */
+.login-body {
+  min-height: 100vh;
+  background: #003366; /* Opteamix Blue */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.login-box {
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
+  text-align: center;
+  width: 350px;
+}
+
+.logo {
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px;
+  background: #3bb2b8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #2c8be0;
+}
+
+.reset-password {
+  display: block;
+  margin-top: 15px;
+  font-size: 13px;
+  color: #333;
+  text-decoration: underline;
+}
+
+/* -------- DASHBOARD PAGE -------- */
+body:not(.login-body) {
+  background: linear-gradient(135deg, #f0f4f7, #e0ecf7);
+}
+
+.dashboard-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  padding: 10px 20px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-small {
+  width: 120px;
+}
+
+.dashboard-header h1 {
+  font-size: 20px;
+  color: #003366;
+}
+
+.logout-btn {
+  background: #003366;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #0055a5;
+}
+
+.tabs {
+  margin-top: 80px;

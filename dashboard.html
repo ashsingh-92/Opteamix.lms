@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opteamix LMS - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="dashboard-header">
+    <img src="opteamix-logo.png" alt="Opteamix Logo" class="logo-small">
+    <h1>Learning Management System</h1>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openTab(event, 'trainings')">📚 Trainings</button>
+    <button class="tab-btn" onclick="openTab(event, 'suggestions')">🔎 Suggestions</button>
+    <button class="tab-btn" onclick="openTab(event, 'progress')">📊 Progress</button>
+  </div>
+
+  <div id="trainings" class="tab-content active">
+    <h2>Available Trainings</h2>
+    <ul id="trainingList">
+      <li>Leadership Skills - Enrolled: John, Priya</li>
+      <li>Time Management - Enrolled: Aishwarya, Raj</li>
+    </ul>
+    <h3>Add a New Training</h3>
+    <input type="text" id="newTraining" placeholder="Enter course name">
+    <button onclick="addTraining()">Add Training</button>
+  </div>
+
+  <div id="suggestions" class="tab-content">
+    <h2>Course Suggestions</h2>
+    <input type="text" id="searchCourse" placeholder="Search for upskilling...">
+    <button onclick="suggestCourse()">Search</button>
+    <ul id="suggestionList"></ul>
+  </div>
+
+  <div id="progress" class="tab-content">
+    <h2>Track Progress</h2>
+    <p>Employee: Aishwarya</p>
+    <progress value="60" max="100"></progress> 60%
+    <p>Employee: Raj</p>
+    <progress value="30" max="100"></progress> 30%
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
