@@ -7,9 +7,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-page">
+
   <div class="login-container">
     <img src="opteamix-logo.png" alt="Opteamix Logo" class="login-logo">
     <h2>Login to Opteamix LMS</h2>
+
     <form onsubmit="return loginUser(event)">
       <input type="text" id="username" placeholder="Enter username" required>
       <input type="password" id="password" placeholder="Enter password" required>
@@ -20,9 +22,11 @@
   <script>
     function loginUser(event) {
       event.preventDefault();
-      // Simple redirect after login
+      // Redirect to dashboard after login
       window.location.href = "dashboard.html";
     }
   </script>
+
 </body>
 </html>
+
