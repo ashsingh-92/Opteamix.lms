@@ -1,109 +1,52 @@
-/* General Reset */
-body {
+/* Login Page */
+body.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #004c97; /* Opteamix blue */
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f5f9ff;
 }
 
-/* Navbar */
-.navbar {
-  background-color: #003366; /* Opteamix blue */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 30px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.navbar .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.navbar .logo img {
-  height: 35px;
-}
-
-.navbar ul {
-  display: flex;
-  gap: 30px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.navbar a {
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  transition: 0.3s;
-}
-
-.navbar a:hover,
-.navbar a.active {
-  background-color: #005f8a;
-}
-
-/* Header */
-.header {
-  text-align: center;
-  background: #005f8a;
-  color: white;
-  padding: 25px 10px;
-  font-size: 24px;
-}
-
-/* Container */
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 25px;
-  padding: 30px;
-}
-
-.card {
-  background: white;
-  padding: 20px;
+.login-container {
+  background: #fff;
+  padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  text-align: center;
+  width: 300px;
 }
 
-.card h2 {
+.login-logo {
+  width: 120px;
   margin-bottom: 15px;
-  color: #003366;
 }
 
-/* Inputs & Buttons */
-input {
+.login-container h2 {
+  margin-bottom: 1rem;
+  color: #004c97;
+}
+
+.login-container input {
+  width: 100%;
   padding: 10px;
   margin: 10px 0;
-  width: 70%;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 5px;
 }
 
-button {
-  padding: 10px 15px;
-  background: #0077cc;
+.login-container button {
+  width: 100%;
+  padding: 10px;
+  background: #004c97;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 1rem;
 }
 
-button:hover {
-  background: #005f8a;
+.login-container button:hover {
+  background: #003366;
 }
-
-ul {
-  padding-left: 18px;
-}
-
