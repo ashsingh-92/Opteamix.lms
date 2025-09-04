@@ -1,72 +1,54 @@
-// -------- LOGIN HANDLER --------
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      window.location.href = "dashboard.html"; 
-    });
-  }
-});
-
-// -------- DASHBOARD FUNCTIONS --------
-function openTab(evt, tabName) {
-  let contents = document.getElementsByClassName("tab-content");
-  let buttons = document.getElementsByClassName("tab-btn");
-
-  for (let i = 0; i < contents.length; i++) {
-    contents[i].style.display = "none";
-    contents[i].classList.remove("active");
-  }
-  for (let i = 0; i < buttons.length; i++) {
-    buttons[i].classList.remove("active");
-  }
-
-  document.getElementById(tabName).style.display = "block";
-  document.getElementById(tabName).classList.add("active");
-  evt.currentTarget.classList.add("active");
-}
-
 // Add new training
 function addTraining() {
-  let trainingInput = document.getElementById("newTraining");
-  let trainingList = document.getElementById("trainingList");
-
-  if (trainingInput.value.trim() !== "") {
-    let li = document.createElement("li");
-    li.textContent = trainingInput.value + " - Enrolled: None yet";
-    trainingList.appendChild(li);
-    trainingInput.value = "";
-  }
-}
-
-// Course suggestions
-function suggestCourse() {
-  let query = document.getElementById("searchCourse").value.toLowerCase();
-  let suggestionList = document.getElementById("suggestionList");
-  suggestionList.innerHTML = "";
-
-  let courses = [
-    { name: "Leadership Skills", url: "https://www.coursera.org/courses?query=leadership" },
-    { name: "Time Management", url: "https://www.coursera.org/courses?query=time%20management" },
-    { name: "Python Programming", url: "https://www.coursera.org/courses?query=python" },
-    { name: "Data Science", url: "https://www.coursera.org/courses?query=data%20science" },
-    { name: "Project Management", url: "https://www.coursera.org/courses?query=project%20management" }
-  ];
-
-  let filtered = courses.filter(c => c.name.toLowerCase().includes(query));
-
-  if (filtered.length === 0) {
-    suggestionList.innerHTML = "<li>No courses found.</li>";
+  const input = document.getElementById("new-training");
+  const trainingName = input.value.trim();
+  if (trainingName) {
+    const list = document.getElementById("training-list");
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${trainingName}</strong> – Enrolled: None yet`;
+    list.appendChild(li);
+    input.value = "";
   } else {
-    filtered.forEach(course => {
-      let li = document.createElement("li");
-      let a = document.createElement("a");
-      a.href = course.url;
-      a.target = "_blank";
-      a.textContent = course.name;
-      li.appendChild(a);
-      suggestionList.appendChild(li);
-    });
+    alert("Please enter a training name!");
   }
 }
+
+// Search for courses
+function searchCourses() {
+  const query = document.getElementById("search-input").value.trim();
+  const suggestionsList = document.getElementById("suggestions-list");
+  suggestionsList.innerHTML = "";
+
+  if (!query) {
+    alert("Please enter a keyword to search!");
+    return;
+  }
+
+  // Dummy course suggestions (can integrate APIs later)
+  const courses = {
+    ai: [
+      { name: "AI for Everyone - Coursera", url: "https://www.coursera.org/learn/ai-for-everyone" },
+      { name: "Machine Learning - Coursera", url: "https://www.coursera.org/learn/machine-learning" }
+    ],
+    leadership: [
+      { name: "Leadership Principles - edX", url: "https://online.hbs.edu/courses/leadership-principles/" },
+      { name: "Emotional Intelligence - Coursera", url: "https://www.coursera.org/learn/emotional-intelligence" }
+    ]
+  };
+
+  let results = [];
+
+  if (query.toLowerCase().includes("ai")) results = courses.ai;
+  else if (query.toLowerCase().includes("leader")) results = courses.leadership;
+
+  if (results.length > 0) {
+    results.forEach(course => {
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="${course.url}" target="_blank">${course.name}</a>`;
+      suggestionsList.appendChild(li);
+    });
+  } else {
+    suggestionsList.innerHTML = "<li>No results found. Try another keyword.</li>";
+  }
+}
+
