@@ -27,20 +27,20 @@
     <section class="quote-section">
       <div class="quote-card">
         <div class="quote-emoji">🌟</div>
-        <blockquote class="quote-text">“An investment in knowledge pays the best interest.” — Benjamin Franklin</blockquote>
+        <blockquote class="quote-text" id="quoteText">“An investment in knowledge pays the best interest.” — Benjamin Franklin</blockquote>
       </div>
     </section>
 
     <section class="grid-section">
       <h3 class="section-heading">Quick Actions</h3>
-      <div id="cardsGrid" class="cards-grid"></div>
+      <div id="cardsGrid" class="cards-grid" aria-live="polite"></div>
     </section>
   </main>
 
   <!-- Modal for card details -->
   <div id="detailModal" class="modal" aria-hidden="true">
-    <div class="modal-content">
-      <button id="modalClose" class="modal-close">✕</button>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="modalClose" class="modal-close" aria-label="Close modal">✕</button>
       <div id="modalBody"></div>
       <div class="modal-actions">
         <button id="modalStart" class="btn-primary">Start Learning</button>
