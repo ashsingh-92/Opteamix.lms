@@ -4,32 +4,94 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Opteamix LMS — Login</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root { --blue:#0072d6; --muted:#637087; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body.login-bg {
+      height: 100vh;
+      background: linear-gradient(180deg, var(--blue) 0%, #0a62b8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      background: #fff;
+      padding: 26px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.18);
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 18px;
+      width: 140px;
+    }
+
+    .login-card h1 { margin: 0 0 8px; font-size: 1.4rem; }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #e6e9ef;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 0;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .muted {
+      font-size: 13px;
+      color: #7b7b7b;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body class="login-bg">
-  <main class="login-container">
+  <div class="login-card">
     <img src="opteamix-logo.png" alt="Opteamix" class="logo"/>
-    <div class="login-card">
-      <h1>Welcome</h1>
-      <form id="loginForm">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" required />
+    <h1>Welcome</h1>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required />
 
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" required />
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" required />
 
-        <button type="submit" class="btn-primary">Login</button>
-      </form>
-      <p class="muted">Use any email to continue (demo mode)</p>
-    </div>
-  </main>
+      <button type="submit" class="btn-primary">Login</button>
+    </form>
+    <p class="muted">Use any email to continue (demo mode)</p>
+  </div>
 
   <script>
-    // Simple demo login — stores email and navigates to dashboard
     document.getElementById('loginForm').addEventListener('submit', function(e){
       e.preventDefault();
-      const email = document.getElementById('email').value;
-      localStorage.setItem('lms_user_email', email);
       window.location.href = 'dashboard.html';
     });
   </script>
