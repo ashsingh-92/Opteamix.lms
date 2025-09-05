@@ -1,0 +1,93 @@
+/* login.css — fully isolated login styles (will always center + blue bg) */
+
+:root{
+  --blue:#0072d6;
+  --blue-dark:#0a62b8;
+  --muted:#637087;
+  --card:#ffffff;
+}
+
+*{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
+html, body { height: 100%; margin: 0; padding: 0; }
+
+/* page background + centering */
+body.login-bg {
+  min-height: 100vh;
+  height: 100vh;
+  background: linear-gradient(180deg, var(--blue) 0%, var(--blue-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* wrapper + card */
+.page-wrap, .login-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  margin: 0 auto;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 26px;
+  box-shadow: 0 12px 30px rgba(2,6,23,0.18);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 14px;
+  width: 110px;
+  height: auto;
+}
+
+h1 { margin: 0 0 10px; font-size: 1.6rem; color:#083954; }
+
+label {
+  display: block;
+  text-align: left;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #e9eef3;
+  font-size: 1rem;
+  background: #fbfdff;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 10px;
+  margin-top: 16px;
+  border-radius: 8px;
+  border: 0;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.muted { margin-top: 12px; font-size:13px; color:#7b7b7b; }
+
+/* safety on small screens */
+@media (max-width:420px){
+  .login-card{ padding:18px; border-radius:10px; }
+  .logo{ width:90px }
+  h1{ font-size:1.3rem }
+}
