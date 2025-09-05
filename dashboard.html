@@ -1,86 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Opteamix LMS – Dashboard</title>
-  <link rel="stylesheet" href="style.css"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Opteamix LMS — Dashboard</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo-wrap">
-      <img src="opteamix-logo.png" alt="Opteamix Logo" class="nav-logo"/>
-      <span class="brand">Opteamix LMS</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="#dashboard" class="active">🏠 Dashboard</a></li>
-      <li><a href="#trainings">📚 Trainings</a></li>
-      <li><a href="#suggestions">🔎 Explore Courses</a></li>
-      <li><a href="#progress">📈 Progress</a></li>
-      <li><a href="index.html" class="logout">Logout</a></li>
-    </ul>
-  </nav>
+<header class="topbar">
+<div class="left">
+<img src="opteamix-logo.png" alt="logo" class="small-logo" />
+<h2 class="brand">Opteamix LMS</h2>
+</div>
+<div class="right">
+<input id="courseSearch" placeholder="Search courses..." />
+<button id="logoutBtn" class="btn-ghost">Logout</button>
+</div>
+</header>
 
-  <!-- Header banner -->
-  <header class="header">
-    <h1>Welcome to Your Learning Space</h1>
-    <p id="welcome-user"></p>
-  </header>
 
-  <!-- Main grid -->
-  <main class="container" id="dashboard">
-    <!-- Highlights -->
-    <section class="card highlight">
-      <h2>🌟 Quote of the Day</h2>
-      <p id="quote">“Learning never exhausts the mind.” – Leonardo da Vinci</p>
-    </section>
+<main class="dashboard-wrap">
+<section class="hero">
+<h1 class="title">Welcome to Your Learning Space</h1>
+<p id="welcomeText" class="subtitle">Hello, Learner! Ready to learn today?</p>
+</section>
 
-    <section class="card spotlight">
-      <h2>📚 Spotlight Course</h2>
-      <p><strong>Recommended:</strong> Emotional Intelligence</p>
-      <a href="https://www.coursera.org/learn/emotional-intelligence" target="_blank">
-        Start Learning →
-      </a>
-    </section>
 
-    <section class="card workshop">
-      <h2>📅 Upcoming Workshop</h2>
-      <p><strong>Agile Leadership Workshop</strong></p>
-      <p>🗓 Date: 15th Sept, 2025<br>⏰ Time: 3 PM IST</p>
-      <button>Register Now</button>
-    </section>
+<section class="quote-section">
+<div class="quote-card">
+<div class="quote-emoji">🌟</div>
+<blockquote class="quote-text">“An investment in knowledge pays the best interest.” — Benjamin Franklin</blockquote>
+</div>
+</section>
 
-    <!-- Trainings -->
-    <section id="trainings" class="card">
-      <h2>📚 Available Trainings</h2>
-      <ul id="training-list">
-        <li><strong>Leadership Skills</strong> – Enrolled: John, Priya</li>
-        <li><strong>Time Management</strong> – Enrolled: Aishwarya, Raj</li>
-      </ul>
-      <div class="form-row">
-        <input id="new-training" type="text" placeholder="Enter course name"/>
-        <button onclick="addTraining()">➕ Add Training</button>
-      </div>
-    </section>
 
-    <!-- Suggestions -->
-    <section id="suggestions" class="card">
-      <h2>🔎 Course Suggestions</h2>
-      <div class="form-row">
-        <input id="search-input" type="text" placeholder="Search for courses (e.g., AI, Leadership)"/>
-        <button onclick="searchCourses()">Search</button>
-      </div>
-      <ul id="suggestions-list"></ul>
-    </section>
+<section class="grid-section">
+<h3 class="section-heading">Quick Actions</h3>
+<div id="cardsGrid" class="cards-grid"></div>
+</section>
+</main>
 
-    <!-- Progress -->
-    <section id="progress" class="card">
-      <h2>📈 Progress Tracker</h2>
-      <p>Feature coming soon 🚀</p>
-    </section>
-  </main>
 
-  <script src="app.js"></script>
+<!-- Modal for card details -->
+<div id="detailModal" class="modal" aria-hidden="true">
+<div class="modal-content">
+<button id="modalClose" class="modal-close">✕</button>
+<div id="modalBody"></div>
+<div class="modal-actions">
+<button id="modalStart" class="btn-primary">Start Learning</button>
+<button id="modalBack" class="btn-ghost">Back</button>
+</div>
+</div>
+</div>
+
+
+<script src="app.js"></script>
 </body>
 </html>
