@@ -4,95 +4,115 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Opteamix LMS — Login</title>
+
+  <!-- Inline CSS so nothing external can override it -->
   <style>
-    :root { --blue:#0072d6; --muted:#637087; }
-
-    html, body {
-      height: 100%;
-      margin: 0;
+    :root{
+      --blue: #0072d6;
+      --blue-dark: #0a62b8;
+      --muted: #637087;
     }
 
-    body.login-bg {
-      height: 100vh;
-      background: linear-gradient(180deg, var(--blue) 0%, #0a62b8 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Reset */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, Arial, sans-serif;background:linear-gradient(180deg,var(--blue) 0%,var(--blue-dark) 100%)}
+
+    /* Page center wrapper */
+    .page-wrap{
+      min-height:100vh;                /* full height */
+      display:flex;
+      align-items:center;              /* vertical center */
+      justify-content:center;          /* horizontal center */
+      padding:20px;
     }
 
-    .login-card {
-      background: #fff;
-      padding: 26px;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(2,6,23,0.18);
-      text-align: center;
-      width: 100%;
-      max-width: 420px;
+    /* Card */
+    .login-card{
+      width:100%;
+      max-width:420px;
+      background:#ffffff;
+      border-radius:12px;
+      box-shadow:0 12px 30px rgba(2,6,23,0.18);
+      padding:28px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
     }
 
-    .logo {
-      display: block;
-      margin: 0 auto 18px;
-      width: 140px;
+    /* Logo placed inside the card (no extra boxes) */
+    .logo{
+      display:block;
+      margin:0 auto 14px;
+      width:110px;
+      height:auto;
     }
 
-    .login-card h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    h1{ margin:0 0 10px; font-size:1.6rem; color:#083954; }
 
-    label {
-      display: block;
-      text-align: left;
-      margin-top: 12px;
-      font-size: 14px;
-      color: var(--muted);
+    label{ display:block; text-align:left; margin-top:12px; font-size:14px; color:var(--muted) }
+    input{
+      width:100%;
+      padding:12px;
+      margin-top:6px;
+      border-radius:8px;
+      border:1px solid #e9eef3;
+      font-size:1rem;
+      background:#fbfdff;
     }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      border: 1px solid #e6e9ef;
-      border-radius: 8px;
-      font-size: 1rem;
+    .btn-primary{
+      width:100%;
+      padding:10px;
+      margin-top:16px;
+      border-radius:8px;
+      border:0;
+      background:var(--blue);
+      color:white;
+      font-weight:600;
+      cursor:pointer;
     }
 
-    .btn-primary {
-      width: 100%;
-      margin-top: 14px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 0;
-      background: var(--blue);
-      color: #fff;
-      font-weight: 600;
-    }
+    .muted{ margin-top:12px; font-size:13px; color:#7b7b7b }
 
-    .muted {
-      font-size: 13px;
-      color: #7b7b7b;
-      margin-top: 10px;
+    /* small screen adjustments */
+    @media (max-width:420px){
+      .login-card{ padding:18px }
+      .logo{ width:90px }
+      h1{ font-size:1.3rem }
     }
   </style>
 </head>
-<body class="login-bg">
-  <div class="login-card">
-    <img src="opteamix-logo.png" alt="Opteamix" class="logo"/>
-    <h1>Welcome</h1>
-    <form id="loginForm">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" required />
+<body>
+  <div class="page-wrap">
+    <div class="login-card" role="main" aria-label="Login card">
+      <!-- Make sure you have opteamix-logo.png in same folder.
+           If you don't, the image will disappear (no extra white box). -->
+      <img src="opteamix-logo.png" alt="Opteamix logo" class="logo" onerror="this.style.display='none'"/>
+      <h1>Welcome</h1>
 
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" required />
+      <form id="loginForm" autocomplete="on">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="email" />
 
-      <button type="submit" class="btn-primary">Login</button>
-    </form>
-    <p class="muted">Use any email to continue (demo mode)</p>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password" />
+
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
+
+      <p class="muted">Use any email to continue (demo mode)</p>
+    </div>
   </div>
 
   <script>
+    // Demo login: stores the email & navigates to dashboard
     document.getElementById('loginForm').addEventListener('submit', function(e){
       e.preventDefault();
-      window.location.href = 'dashboard.html';
+      const email = document.getElementById('email').value || 'Learner';
+      try { localStorage.setItem('lms_user_email', email); } catch(e) {}
+      // navigate (file must exist or remove line while testing)
+      // window.location.href = 'dashboard.html';
+      alert('Demo login ok — replace alert with navigation when ready.');
     });
   </script>
 </body>
