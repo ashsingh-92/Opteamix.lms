@@ -33,9 +33,31 @@
       </div>
     </section>
 
-    <section class="grid-section" aria-labelledby="quickActions">
-      <h3 id="quickActions" class="section-heading">Quick Actions</h3>
+    <!-- Progress Tracker (cards) -->
+    <section class="grid-section" aria-labelledby="progressTracker">
+      <h3 id="progressTracker" class="section-heading">Progress Tracker</h3>
       <div id="cardsGrid" class="cards-grid" aria-live="polite"></div>
+    </section>
+
+    <!-- Available Training (list view) -->
+    <section class="available-section" aria-labelledby="availableTraining">
+      <h3 id="availableTraining" class="section-heading">Available Training</h3>
+      <div id="availableList" class="available-list" aria-live="polite"></div>
+    </section>
+
+    <!-- Course Suggestions (search external sources) -->
+    <section class="suggestions-section" aria-labelledby="courseSuggestions">
+      <h3 id="courseSuggestions" class="section-heading">Course Suggestions</h3>
+
+      <div class="suggest-search">
+        <input id="suggestSearchInput" placeholder="Search courses (YouTube, Coursera, LinkedIn ...) — try 'python' or 'communication'" aria-label="Search course suggestions" />
+        <button id="suggestSearchBtn" class="btn-primary">Search</button>
+      </div>
+
+      <div id="suggestionsResults" class="suggestions-results" aria-live="polite"></div>
+      <div id="suggestionsNote" class="muted" style="margin-top:8px;font-size:13px;">
+        Tip: to fetch live YouTube results configure a `YOUTUBE_API_KEY` in app.js. For Coursera/LinkedIn use Google Custom Search or partner APIs.
+      </div>
     </section>
   </main>
 
