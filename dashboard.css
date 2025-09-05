@@ -1,0 +1,159 @@
+/* dashboard.css — all dashboard/quote/cards/modal styles (no login rules) */
+
+:root{
+  --blue:#0072d6;
+  --blue-dark:#0a62b8;
+  --muted:#637087;
+  --card:#ffffff;
+  --bg:#f4f7fb;
+  --success:#1aa56a;
+  --glass: rgba(255,255,255,0.7);
+  --focus: 0 0 0 4px rgba(11,95,165,0.12);
+}
+*{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
+html{font-size:16px}
+body{margin:0;background:var(--bg);color:#0b2540;font-size:1rem; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+
+/* ---------- TOPBAR (tight + sticky) ---------- */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 18px;
+  background:linear-gradient(90deg,var(--blue),var(--blue-dark));
+  color:#fff;
+  box-shadow:0 2px 8px rgba(2,6,23,0.08);
+}
+.topbar .left{display:flex;align-items:center;gap:12px}
+.small-logo{width:36px;height:36px;border-radius:6px;background:#fff;padding:6px}
+.brand{margin:0;font-size:1rem;font-weight:700}
+.topbar .right{display:flex;align-items:center;gap:10px}
+.topbar input{padding:8px 12px;border-radius:10px;border:0;min-width:240px;background:#fff;outline:none}
+.topbar .btn-ghost{background:none;border:1px solid rgba(255,255,255,0.18);padding:6px 10px;border-radius:8px;color:#fff}
+
+/* ---------- DASHBOARD WRAP ---------- */
+.dashboard-wrap{max-width:1300px;margin:18px auto;padding:18px}
+
+/* ---------- HERO / TITLE ---------- */
+.hero .title{
+  font-size:2.25rem;
+  text-align:center;
+  margin:6px 0 8px;
+  color:var(--blue);
+  font-weight:800;
+  letter-spacing:0.1px;
+}
+.hero .subtitle{font-size:1rem;text-align:center;color:var(--muted);margin-bottom:18px}
+
+/* ---------- QUOTE (prominent + animated) ---------- */
+.quote-section{display:flex;justify-content:center;margin-bottom:22px}
+.quote-card{
+  width:95%;
+  max-width:1060px;
+  background:var(--card);
+  padding:22px 28px;
+  border-radius:14px;
+  box-shadow:0 18px 40px rgba(11,95,165,0.06);
+  display:flex;
+  align-items:center;
+  gap:18px;
+  transform:translateY(0);
+  animation:quoteIn .7s ease both;
+}
+@keyframes quoteIn{
+  from{opacity:0; transform:translateY(12px) scale(.995)}
+  to{opacity:1; transform:translateY(0) scale(1)}
+}
+@keyframes floatSlight{
+  0%{ transform: translateY(0) }
+  50%{ transform: translateY(-6px) }
+  100%{ transform: translateY(0) }
+}
+.quote-card { animation: floatSlight 6s ease-in-out infinite; animation-delay:0.4s }
+
+.quote-emoji{font-size:26px; margin-left:4px}
+.quote-text{
+  font-size:1.08rem;
+  margin:0;
+  padding:6px 18px;
+  border-left:4px solid var(--blue);
+  transform:skewX(-6deg);
+  font-style:italic;
+  color:#0b2b46;
+  line-height:1.45;
+}
+
+/* ---------- GRID & CARDS (layout improvements) ---------- */
+.section-heading{margin:18px 0 14px;color:#17324d;font-size:1.05rem;font-weight:700}
+.cards-grid{
+  display:grid;
+  gap:20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items:stretch;
+}
+.card-square{
+  background:var(--card);
+  border-radius:14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 8px 26px rgba(15,30,60,0.06);
+  transition:transform .18s ease, box-shadow .18s ease;
+  padding:22px 12px 34px 12px;
+  text-align:center;
+  position:relative;
+  overflow:visible;
+  min-height:200px;
+}
+.card-square:hover{ transform:translateY(-8px); box-shadow:0 22px 40px rgba(11,95,165,0.08); }
+.card-square:focus{ outline:none; box-shadow: var(--focus); transform: translateY(-6px) }
+
+.card-top{ display:flex; align-items:center; justify-content:center; margin-bottom:12px; position:relative; width:82px; height:82px; border-radius:999px; background:linear-gradient(180deg,#fff,#fbfdff); box-shadow:0 6px 18px rgba(11,95,165,0.04); }
+.progress-ring{ position:absolute; inset:0; border-radius:999px; display:flex; align-items:center; justify-content:center; background: conic-gradient(var(--blue) 0deg, #eef5fb 0deg); }
+.progress-ring-inner{ width:68%; height:68%; border-radius:999px; background:var(--card); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; color:#0b3a66; }
+
+.card-icon{font-size:28px; margin:0}
+.card-title{font-weight:700;font-size:1rem;color:#0b3a66;margin-top:10px}
+
+.progress-badge{ position:absolute; top:12px; right:12px; padding:6px 8px; border-radius:999px; font-weight:700; font-size:0.9rem; color:#083954; background:rgba(11,95,165,0.06); border:1px solid rgba(11,95,165,0.12); min-width:46px; text-align:center; }
+.card-progress{ position:absolute; left:0; right:0; bottom:0; height:6px; background:#eef5fb; border-bottom-left-radius:14px; border-bottom-right-radius:14px; }
+.card-progress > span{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--blue),var(--blue-dark)); transition:width .5s ease; }
+
+/* tooltip (CSS) */
+.card-square[title]:hover::after,
+.card-square[title]:focus::after{
+  content: attr(title);
+  position: absolute;
+  left:50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 12px);
+  background: rgba(16,25,40,0.95);
+  color:#fff;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:0.88rem;
+  white-space:nowrap;
+  box-shadow:0 6px 20px rgba(2,6,23,0.2);
+  z-index:100;
+  opacity:1;
+}
+
+/* mobile adjustments */
+@media (max-width:920px){
+  .quote-card{padding:18px}
+  .cards-grid{gap:14px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));}
+  .card-square{min-height:180px;padding:16px}
+  .card-top{width:72px;height:72px}
+}
+@media (max-width:460px){
+  .topbar input{min-width:140px}
+  .hero .title{font-size:1.45rem}
+  .cards-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  .card-top{width:64px;height:64px}
+  .card-square{min-height:160px;padding:12px}
+}
