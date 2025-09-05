@@ -1,59 +1,54 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Opteamix LMS — Dashboard</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Opteamix LMS — Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header class="topbar">
-<div class="left">
-<img src="opteamix-logo.png" alt="logo" class="small-logo" />
-<h2 class="brand">Opteamix LMS</h2>
-</div>
-<div class="right">
-<input id="courseSearch" placeholder="Search courses..." />
-<button id="logoutBtn" class="btn-ghost">Logout</button>
-</div>
-</header>
+  <header class="topbar">
+    <div class="left">
+      <img src="opteamix-logo.png" alt="logo" class="small-logo" />
+      <h2 class="brand">Opteamix LMS</h2>
+    </div>
+    <div class="right">
+      <input id="courseSearch" placeholder="Search courses..." />
+      <button id="logoutBtn" class="btn-ghost">Logout</button>
+    </div>
+  </header>
 
+  <main class="dashboard-wrap">
+    <section class="hero">
+      <h1 class="title">Welcome to Your Learning Space</h1>
+      <p id="welcomeText" class="subtitle">Hello, Learner! Ready to learn today?</p>
+    </section>
 
-<main class="dashboard-wrap">
-<section class="hero">
-<h1 class="title">Welcome to Your Learning Space</h1>
-<p id="welcomeText" class="subtitle">Hello, Learner! Ready to learn today?</p>
-</section>
+    <section class="quote-section">
+      <div class="quote-card">
+        <div class="quote-emoji">🌟</div>
+        <blockquote class="quote-text">“An investment in knowledge pays the best interest.” — Benjamin Franklin</blockquote>
+      </div>
+    </section>
 
+    <section class="grid-section">
+      <h3 class="section-heading">Quick Actions</h3>
+      <div id="cardsGrid" class="cards-grid"></div>
+    </section>
+  </main>
 
-<section class="quote-section">
-<div class="quote-card">
-<div class="quote-emoji">🌟</div>
-<blockquote class="quote-text">“An investment in knowledge pays the best interest.” — Benjamin Franklin</blockquote>
-</div>
-</section>
+  <!-- Modal for card details -->
+  <div id="detailModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button id="modalClose" class="modal-close">✕</button>
+      <div id="modalBody"></div>
+      <div class="modal-actions">
+        <button id="modalStart" class="btn-primary">Start Learning</button>
+        <button id="modalBack" class="btn-ghost">Back</button>
+      </div>
+    </div>
+  </div>
 
-
-<section class="grid-section">
-<h3 class="section-heading">Quick Actions</h3>
-<div id="cardsGrid" class="cards-grid"></div>
-</section>
-</main>
-
-
-<!-- Modal for card details -->
-<div id="detailModal" class="modal" aria-hidden="true">
-<div class="modal-content">
-<button id="modalClose" class="modal-close">✕</button>
-<div id="modalBody"></div>
-<div class="modal-actions">
-<button id="modalStart" class="btn-primary">Start Learning</button>
-<button id="modalBack" class="btn-ghost">Back</button>
-</div>
-</div>
-</div>
-
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
