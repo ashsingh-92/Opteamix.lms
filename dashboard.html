@@ -14,8 +14,9 @@
       <span class="brand">Opteamix LMS</span>
     </div>
     <ul class="nav-links">
-      <li><a href="#trainings" class="active">📚 Trainings</a></li>
-      <li><a href="#suggestions">🔎 Course Suggestions</a></li>
+      <li><a href="#dashboard" class="active">🏠 Dashboard</a></li>
+      <li><a href="#trainings">📚 Trainings</a></li>
+      <li><a href="#suggestions">🔎 Explore Courses</a></li>
       <li><a href="#progress">📈 Progress</a></li>
       <li><a href="index.html" class="logout">Logout</a></li>
     </ul>
@@ -23,11 +24,33 @@
 
   <!-- Header banner -->
   <header class="header">
-    <h1>Learning Management System</h1>
+    <h1>Welcome to Your Learning Space</h1>
+    <p id="welcome-user"></p>
   </header>
 
   <!-- Main grid -->
-  <main class="container">
+  <main class="container" id="dashboard">
+    <!-- Highlights -->
+    <section class="card highlight">
+      <h2>🌟 Quote of the Day</h2>
+      <p id="quote">“Learning never exhausts the mind.” – Leonardo da Vinci</p>
+    </section>
+
+    <section class="card spotlight">
+      <h2>📚 Spotlight Course</h2>
+      <p><strong>Recommended:</strong> Emotional Intelligence</p>
+      <a href="https://www.coursera.org/learn/emotional-intelligence" target="_blank">
+        Start Learning →
+      </a>
+    </section>
+
+    <section class="card workshop">
+      <h2>📅 Upcoming Workshop</h2>
+      <p><strong>Agile Leadership Workshop</strong></p>
+      <p>🗓 Date: 15th Sept, 2025<br>⏰ Time: 3 PM IST</p>
+      <button>Register Now</button>
+    </section>
+
     <!-- Trainings -->
     <section id="trainings" class="card">
       <h2>📚 Available Trainings</h2>
@@ -61,4 +84,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-
