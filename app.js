@@ -1,110 +1,79 @@
-/* app.js - LMS Dashboard */
-
-/* ---------- Trainings ---------- */
-function addTraining() {
-  const input = document.getElementById("new-training");
-  const trainingName = input.value.trim();
-  if (!trainingName) {
-    alert("Please enter a training name!");
-    return;
-  }
-
-  // Add to DOM
-  const list = document.getElementById("training-list");
-  const li = document.createElement("li");
-  const strong = document.createElement("strong");
-  strong.textContent = trainingName;
-  li.appendChild(strong);
-  li.appendChild(document.createTextNode(" – Enrolled: None yet"));
-  list.appendChild(li);
-
-  // Save to localStorage
-  const saved = JSON.parse(localStorage.getItem("trainings") || "[]");
-  saved.push({ name: trainingName, enrolled: "None yet" });
-  localStorage.setItem("trainings", JSON.stringify(saved));
-
-  input.value = "";
+// Updated front-end logic: compact square cards + modal details
+div.tabIndex = 0;
+div.dataset.id = c.id;
+div.innerHTML = `
+<div class="card-icon">${c.icon}</div>
+<div class="card-title">${c.title}</div>
+`;
+grid.appendChild(div);
+});
 }
 
-function loadTrainings() {
-  const saved = JSON.parse(localStorage.getItem("trainings") || "[]");
-  const list = document.getElementById("training-list");
-  saved.forEach(training => {
-    const li = document.createElement("li");
-    const strong = document.createElement("strong");
-    strong.textContent = training.name;
-    li.appendChild(strong);
-    li.appendChild(document.createTextNode(" – Enrolled: " + training.enrolled));
-    list.appendChild(li);
-  });
+
+renderCards(courses);
+
+
+// Search
+$q('#courseSearch')?.addEventListener('input', (e)=>{
+const q = e.target.value.trim().toLowerCase();
+const filtered = courses.filter(c => c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q));
+renderCards(filtered);
+});
+
+
+// Card click -> modal details
+const modal = $q('#detailModal');
+const modalBody = $q('#modalBody');
+const modalClose = $q('#modalClose');
+const modalStart = $q('#modalStart');
+const modalBack = $q('#modalBack');
+let activeCourseId = null;
+
+
+document.addEventListener('click', (e)=>{
+const card = e.target.closest('.card-square');
+if(card){
+const id = card.dataset.id;
+openModal(id);
+}
+});
+
+
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+modalClose?.addEventListener('click', closeModal);
+modalBack?.addEventListener('click', closeModal);
+modalStart?.addEventListener('click', ()=>{
+if(!activeCourseId) return;
+// simulate progress increment
+courses = courses.map(c=> c.id===activeCourseId ? {...c, progress: Math.min(100,c.progress+20)} : c);
+localStorage.setItem('lms_demo_courses', JSON.stringify(courses));
+closeModal();
+renderCards(courses);
+});
+
+
+function openModal(id){
+activeCourseId = id;
+const c = courses.find(x=>x.id===id);
+modalBody.innerHTML = `<h2 style="margin-top:0">${c.icon} ${c.title}</h2>
+<p style="color:var(--muted)">${c.desc}</p>
+<p><strong>Progress:</strong> ${c.progress}%</p>`;
+modal.setAttribute('aria-hidden','false');
+}
+function closeModal(){
+activeCourseId = null;
+modal.setAttribute('aria-hidden','true');
 }
 
-/* ---------- Course Search ---------- */
-function searchCourses() {
-  const query = document.getElementById("search-input").value.trim().toLowerCase();
-  const suggestionsList = document.getElementById("suggestions-list");
-  suggestionsList.innerHTML = "";
 
-  if (!query) {
-    alert("Please enter a keyword to search!");
-    return;
-  }
+// logout
+$q('#logoutBtn')?.addEventListener('click', ()=>{
+localStorage.removeItem('lms_user_email');
+window.location.href='index.html';
+});
 
-  const courses = {
-    ai: [
-      { name: "AI for Everyone - Coursera", url: "https://www.coursera.org/learn/ai-for-everyone" },
-      { name: "Machine Learning - Coursera", url: "https://www.coursera.org/learn/machine-learning" }
-    ],
-    leadership: [
-      { name: "Leadership Principles - edX", url: "https://online.hbs.edu/courses/leadership-principles/" },
-      { name: "Emotional Intelligence - Coursera", url: "https://www.coursera.org/learn/emotional-intelligence" }
-    ]
-  };
 
-  let results = [];
-  if (query.includes("ai")) results = courses.ai;
-  else if (query.includes("leader")) results = courses.leadership;
-
-  if (results.length > 0) {
-    results.forEach(course => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = course.url;
-      a.target = "_blank";
-      a.textContent = course.name;
-      li.appendChild(a);
-      suggestionsList.appendChild(li);
-    });
-  } else {
-    const li = document.createElement("li");
-    li.textContent = "No results found. Try another keyword.";
-    suggestionsList.appendChild(li);
-  }
+// initial save if not present
+if(!localStorage.getItem('lms_demo_courses')){
+localStorage.setItem('lms_demo_courses', JSON.stringify(courses));
 }
-
-/* ---------- Quote of the Day ---------- */
-function showQuote() {
-  const quotes = [
-    "“Learning never exhausts the mind.” – Leonardo da Vinci",
-    "“An investment in knowledge pays the best interest.” – Benjamin Franklin",
-    "“The beautiful thing about learning is that no one can take it away from you.” – B.B. King",
-    "“Education is the most powerful weapon which you can use to change the world.” – Nelson Mandela"
-  ];
-  const random = Math.floor(Math.random() * quotes.length);
-  document.getElementById("quote").textContent = quotes[random];
-}
-
-/* ---------- Welcome User ---------- */
-function showWelcome() {
-  const username = localStorage.getItem("username");
-  if (username) {
-    document.getElementById("welcome-user").textContent = `Hello, ${username}! Ready to learn today?`;
-  }
-}
-
-/* ---------- On Page Load ---------- */
-window.onload = function() {
-  loadTrainings();
-  showQuote();
-  showWelcome();
-};
