@@ -22,11 +22,13 @@
   <script>
     function loginUser(event) {
       event.preventDefault();
-      // Redirect to dashboard after login
+      const username = document.getElementById("username").value.trim();
+      if (username) {
+        localStorage.setItem("username", username); // save for dashboard
+      }
       window.location.href = "dashboard.html";
     }
   </script>
 
 </body>
 </html>
-
