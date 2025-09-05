@@ -4,22 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Opteamix LMS — Login</title>
-
-  <!-- ONLY login.css -->
   <link rel="stylesheet" href="login.css" />
 </head>
 <body class="login-bg">
   <div class="page-wrap">
-    <div class="login-card" role="main" aria-label="Login card">
+    <div class="login-card">
       <img src="opteamix-logo.png" alt="Opteamix logo" class="logo" onerror="this.style.display='none'"/>
       <h1>Welcome</h1>
 
-      <form id="loginForm" autocomplete="on">
+      <form id="loginForm">
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" required autocomplete="email" />
+        <input id="email" name="email" type="email" required />
 
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" required autocomplete="current-password" />
+        <input id="password" name="password" type="password" required />
 
         <button type="submit" class="btn-primary">Login</button>
       </form>
@@ -29,12 +27,10 @@
   </div>
 
   <script>
-    // Demo login: store the email and navigate to dashboard.html
     document.getElementById('loginForm').addEventListener('submit', function(e){
       e.preventDefault();
       const email = document.getElementById('email').value || 'Learner';
-      try { localStorage.setItem('lms_user_email', email); } catch(e) {}
-      // navigate to dashboard (ensure dashboard.html exists in same folder)
+      localStorage.setItem('lms_user_email', email);
       window.location.href = 'dashboard.html';
     });
   </script>
