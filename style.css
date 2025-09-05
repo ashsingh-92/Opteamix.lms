@@ -1,189 +1,62 @@
-/* ---------------- LOGIN PAGE STYLES ---------------- */
-body.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #004c97; /* Opteamix Blue */
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
+:root{ --blue:#0b5fa5; --muted:#637087; --card:#ffffff; --bg:#f4f7fb }
+*{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
+html{font-size:16px} /* base; increase if you want even bigger */
+body{margin:0;background:var(--bg);color:#0b2540;font-size:1rem}
 
-.login-container {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  text-align: center;
-  width: 300px;
-}
 
-.login-logo {
-  width: 120px;
-  margin-bottom: 15px;
-}
+/* Top bar */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--blue);color:#fff}
+.left{display:flex;align-items:center;gap:12px}
+.small-logo{width:44px}
+.brand{margin:0;font-size:1.05rem}
+.topbar input{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);min-width:220px}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,0.2);padding:8px 10px;border-radius:8px;color:#fff}
 
-.login-container h2 {
-  margin-bottom: 1rem;
-  color: #004c97;
-}
 
-.login-container input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+/* Dashboard layout */
+.dashboard-wrap{max-width:1200px;margin:18px auto;padding:0 20px}
+.hero .title{font-size:2rem;text-align:center;margin:8px 0;color:var(--blue)}
+.hero .subtitle{font-size:1rem;text-align:center;color:var(--muted);margin-bottom:18px}
 
-.login-container button {
-  width: 100%;
-  padding: 10px;
-  background: #004c97;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-}
 
-.login-container button:hover {
-  background: #003366;
-}
+/* Quote */
+.quote-section{display:flex;justify-content:center;margin-bottom:18px}
+.quote-card{width:90%;max-width:1000px;background:var(--card);padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(11,95,165,0.06);display:flex;align-items:center;gap:20px;justify-content:center}
+.quote-emoji{font-size:28px}
+.quote-text{font-size:1.05rem;margin:0;padding:6px 18px;border-left:4px solid var(--blue);transform:skewX(-6deg); /* inclined look */}
 
-/* ---------------- DASHBOARD STYLES ---------------- */
-body:not(.login-page) {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f8f9fb;
-}
 
-/* Navbar */
-body:not(.login-page) .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #004c97;
-  padding: 0.8rem 1.5rem;
-  color: #fff;
-}
+/* Grid of square icon cards */
+.section-heading{margin:18px 0 10px;color:#17324d}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px}
+.card-square{background:var(--card);aspect-ratio:1/1;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 18px rgba(15,30,60,0.06);transition:transform .18s ease,box-shadow .18s ease;padding:12px;text-align:center}
+.card-square:hover{transform:translateY(-6px);box-shadow:0 14px 28px rgba(11,95,165,0.08)}
+.card-icon{font-size:28px;margin-bottom:10px}
+.card-title{font-weight:700;font-size:1rem;color:#0b3a66}
 
-body:not(.login-page) .nav-logo {
-  width: 40px;
-  margin-right: 10px;
-}
 
-body:not(.login-page) .logo-wrap {
-  display: flex;
-  align-items: center;
-}
+/* Modal */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,18,32,0.45);z-index:1200}
+.modal[aria-hidden="false"]{display:flex}
+.modal-content{background:var(--card);width:min(720px,92%);padding:22px;border-radius:12px;position:relative}
+.modal-close{position:absolute;right:12px;top:10px;border:0;background:none;font-size:18px;cursor:pointer}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.btn-primary{background:var(--blue);color:#fff;border:0;padding:8px 12px;border-radius:8px}
+.btn-ghost{background:none;border:1px solid #dfe7f2;padding:8px 12px;border-radius:8px}
 
-body:not(.login-page) .brand {
-  font-weight: bold;
-  font-size: 1.2rem;
-}
 
-body:not(.login-page) .nav-links {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-}
+/* Login card (keeps blue background feel) */
+.login-bg{height:100vh;background:linear-gradient(180deg,var(--blue) 0%,#084f8f 100%);display:flex;align-items:center;justify-content:center}
+.login-container{width:100%;max-width:420px;padding:24px}
+.logo{display:block;margin:0 auto 18px;width:140px}
+.login-card{background:rgba(255,255,255,0.98);padding:26px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.18);text-align:center}
+.login-card h1{margin:0 0 8px;font-size:1.4rem}
+.login-card label{display:block;text-align:left;margin-top:12px;font-size:14px;color:var(--muted)}
+.login-card input{width:100%;padding:12px;margin-top:6px;border:1px solid #e6e9ef;border-radius:8px;font-size:1rem}
 
-body:not(.login-page) .nav-links a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-}
 
-body:not(.login-page) .nav-links a:hover,
-body:not(.login-page) .nav-links .active {
-  text-decoration: underline;
-}
-
-/* Header */
-body:not(.login-page) .header {
-  text-align: center;
-  padding: 2rem;
-  background: #f5f7fa;
-}
-
-body:not(.login-page) .header h1 {
-  margin: 0 0 0.5rem;
-  color: #004c97;
-}
-
-body:not(.login-page) .header p {
-  font-size: 1rem;
-  color: #555;
-}
-
-/* Container & Cards */
-body:not(.login-page) .container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  padding: 2rem;
-}
-
-body:not(.login-page) .card {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-/* Spotlight & Workshop styling */
-body:not(.login-page) .card.spotlight a {
-  display: inline-block;
-  margin-top: 10px;
-  color: #004c97;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-body:not(.login-page) .card.spotlight a:hover {
-  text-decoration: underline;
-}
-
-body:not(.login-page) .card.workshop button {
-  margin-top: 10px;
-  padding: 8px 15px;
-  background: #004c97;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-body:not(.login-page) .card.workshop button:hover {
-  background: #003366;
-}
-
-/* Forms */
-body:not(.login-page) .form-row {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-body:not(.login-page) .form-row input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-body:not(.login-page) .form-row button {
-  padding: 8px 12px;
-  background: #004c97;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-body:not(.login-page) .form-row button:hover {
-  background: #003366;
+@media (max-width:600px){
+.quote-card{padding:18px}
+.quote-text{font-size:0.98rem}
+.hero .title{font-size:1.5rem}
 }
