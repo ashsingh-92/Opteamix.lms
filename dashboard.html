@@ -4,35 +4,37 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Opteamix LMS — Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- ONLY dashboard.css -->
+  <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
-  <header class="topbar">
+  <header class="topbar" role="banner">
     <div class="left">
-      <img src="opteamix-logo.png" alt="logo" class="small-logo" />
+      <img src="opteamix-logo.png" alt="Opteamix logo" class="small-logo" onerror="this.style.display='none'"/>
       <h2 class="brand">Opteamix LMS</h2>
     </div>
     <div class="right">
-      <input id="courseSearch" placeholder="Search courses..." />
-      <button id="logoutBtn" class="btn-ghost">Logout</button>
+      <input id="courseSearch" placeholder="Search courses..." aria-label="Search courses" />
+      <button id="logoutBtn" class="btn-ghost" aria-label="Logout">Logout</button>
     </div>
   </header>
 
-  <main class="dashboard-wrap">
-    <section class="hero">
-      <h1 class="title">Welcome to Your Learning Space</h1>
+  <main class="dashboard-wrap" role="main">
+    <section class="hero" aria-labelledby="heroTitle">
+      <h1 id="heroTitle" class="title">Welcome to Your Learning Space</h1>
       <p id="welcomeText" class="subtitle">Hello, Learner! Ready to learn today?</p>
     </section>
 
-    <section class="quote-section">
-      <div class="quote-card">
-        <div class="quote-emoji">🌟</div>
+    <section class="quote-section" aria-hidden="false">
+      <div class="quote-card" aria-live="polite">
+        <div class="quote-emoji" aria-hidden="true">🌟</div>
         <blockquote class="quote-text" id="quoteText">“An investment in knowledge pays the best interest.” — Benjamin Franklin</blockquote>
       </div>
     </section>
 
-    <section class="grid-section">
-      <h3 class="section-heading">Quick Actions</h3>
+    <section class="grid-section" aria-labelledby="quickActions">
+      <h3 id="quickActions" class="section-heading">Quick Actions</h3>
       <div id="cardsGrid" class="cards-grid" aria-live="polite"></div>
     </section>
   </main>
@@ -49,6 +51,7 @@
     </div>
   </div>
 
+  <!-- Dashboard JS (app logic) -->
   <script src="app.js"></script>
 </body>
 </html>
