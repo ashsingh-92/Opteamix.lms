@@ -1,83 +1,82 @@
-:root{ --blue:#0072d6; --muted:#637087; --card:#ffffff; --bg:#f4f7fb }
+/* ---------- Variables & base ---------- */
+:root{ --blue:#0072d6; --blue-dark:#0a62b8; --muted:#637087; --card:#ffffff; --bg:#f4f7fb }
 *{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
 html{font-size:16px}
 body{margin:0;background:var(--bg);color:#0b2540;font-size:1rem}
 
-/* ---------------- LOGIN PAGE ---------------- */
+/* ---------- LOGIN PAGE (centered card) ---------- */
 html, body { height: 100%; margin: 0; }
 
 body.login-bg {
   height: 100vh;
-  background: linear-gradient(180deg, var(--blue) 0%, #0a62b8 100%);
+  background: linear-gradient(180deg, var(--blue) 0%, var(--blue-dark) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.login-container {
-  width: 100%;
-  max-width: 420px;
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.page-wrap {
+  min-height: 100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
 }
 
-.login-card {
-  width: 100%;
-  background: rgba(255,255,255,0.98);
-  padding: 26px;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(2,6,23,0.18);
-  text-align: center;
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(2,6,23,0.18);
+  padding:28px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 18px;
-  width: 140px;
+.logo{
+  display:block;
+  margin:0 auto 14px;
+  width:110px;
+  height:auto;
 }
 
-.login-card h1 {
-  margin: 0 0 8px;
-  font-size: 1.4rem;
+h1{ margin:0 0 10px; font-size:1.6rem; color:#083954; }
+
+label{ display:block; text-align:left; margin-top:12px; font-size:14px; color:var(--muted) }
+input{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:8px;
+  border:1px solid #e9eef3;
+  font-size:1rem;
+  background:#fbfdff;
 }
 
-.login-card label {
-  display: block;
-  text-align: left;
-  margin-top: 12px;
-  font-size: 14px;
-  color: var(--muted);
+.btn-primary{
+  width:100%;
+  padding:10px;
+  margin-top:16px;
+  border-radius:8px;
+  border:0;
+  background:var(--blue);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
 }
 
-.login-card input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 6px;
-  border: 1px solid #e6e9ef;
-  border-radius: 8px;
-  font-size: 1rem;
+.muted{ margin-top:12px; font-size:13px; color:#7b7b7b }
+
+/* small screen adjustments */
+@media (max-width:420px){
+  .login-card{ padding:18px }
+  .logo{ width:90px }
+  h1{ font-size:1.3rem }
 }
 
-.btn-primary {
-  width: 100%;
-  margin-top: 14px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 0;
-  background: var(--blue);
-  color: #fff;
-  font-weight: 600;
-}
-
-.muted {
-  font-size: 13px;
-  color: #7b7b7b;
-  margin-top: 10px;
-}
-
-/* ---------------- DASHBOARD ---------------- */
+/* ---------- DASHBOARD / QUOTE / CARD STYLES (kept here for later) ---------- */
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--blue);color:#fff}
 .left{display:flex;align-items:center;gap:12px}
 .small-logo{width:44px}
