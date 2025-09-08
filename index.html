@@ -25,17 +25,23 @@
         <button type="submit" class="btn-primary">Login</button>
       </form>
 
-      <p class="muted">Use your email to sign in or <a href="#" id="signupLink">Sign up</a></p>
+      <p class="muted">
+        Use your email to sign in or
+        <a href="#" id="signupLink">Sign up</a>
+      </p>
     </div>
   </div>
 
   <script>
-    // === CONFIG: Paste your Supabase values here ===
-    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"; // Settings > API > Project URL
-    const SUPABASE_KEY = "YOUR_ANON_PUBLIC_KEY";               // Settings > API > anon key
-    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_KEY);
+    /* ==== CONFIG: replace these with your Supabase values ==== */
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"; // from Settings > API > Project URL
+    const SUPABASE_KEY = "YOUR_ANON_PUBLIC_KEY";               // from Settings > API > anon key
+    /* ======================================================== */
 
-    // Helper: redirect to dashboard with user name in URL
+    // Create Supabase client from the global "supabase"
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Helper: redirect to dashboard
     function redirectToDashboard(email) {
       const safeName = encodeURIComponent(email.split('@')[0] || 'user');
       window.location.href = `dashboard.html?user=${safeName}`;
@@ -43,26 +49,48 @@
 
     // Sign up
     async function signUp(email, password) {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        alert("Sign up error: " + error.message);
-        return;
+      try {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          alert("Sign up error: " + error.message);
+          console.error("SignUp error:", error);
+          return;
+        }
+        console.log("SignUp result:", data);
+
+        if (data?.user && !data?.session) {
+          // Email confirmation required
+          alert("Sign up successful! Please check your email to confirm, then log in.");
+        } else {
+          // Auto signed in
+          alert("Sign up successful! Redirecting to dashboard...");
+          redirectToDashboard(email);
+        }
+      } catch (err) {
+        console.error("Unexpected signUp error:", err);
+        alert("Unexpected sign up error — check console.");
       }
-      alert("Sign up successful! Please check your email to confirm (if required), then log in.");
     }
 
     // Sign in
     async function signIn(email, password) {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        alert("Login error: " + error.message);
-        return;
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          alert("Login error: " + error.message);
+          console.error("SignIn error:", error);
+          return;
+        }
+        console.log("SignIn result:", data);
+        redirectToDashboard(email);
+      } catch (err) {
+        console.error("Unexpected signIn error:", err);
+        alert("Unexpected sign in error — check console.");
       }
-      redirectToDashboard(email);
     }
 
-    // Handle login form submit
-    document.getElementById("loginForm").addEventListener("submit", function(e){
+    // Attach login form handler
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
@@ -73,14 +101,14 @@
       signIn(email, password);
     });
 
-    // Handle signup link click
-    document.getElementById("signupLink").addEventListener("click", function(e){
+    // Attach signup link handler
+    document.getElementById("signupLink").addEventListener("click", function(e) {
       e.preventDefault();
       const email = prompt("Enter your email to sign up:");
+      if (!email) return;
       const password = prompt("Choose a password (min 6 characters):");
-      if (email && password) {
-        signUp(email, password);
-      }
+      if (!password) return;
+      signUp(email.trim(), password);
     });
   </script>
 </body>
