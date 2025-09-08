@@ -3,202 +3,198 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Opteamix LMS — Login (diagnostic)</title>
+  <title>Opteamix LMS — Login</title>
+
+  <!-- Use your real login.css if you have one -->
   <link rel="stylesheet" href="login.css" />
+
+  <!-- Minimal fallback styles so page remains usable even if login.css missing -->
   <style>
-    body.login-bg{ font-family: Inter, system-ui, Arial, sans-serif; background: linear-gradient(180deg,#0b63d6,#0b7be6); min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center; }
-    .page-wrap{ width:100%; max-width:420px; padding:24px; }
+    :root{--blue:#0b63d6;--muted:#64748b}
+    body.login-bg{ font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#0b63d6 0%,#0b7be6 100%); min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center; padding:24px;}
+    .page-wrap{ width:100%; max-width:480px; }
     .login-card{ background:rgba(255,255,255,0.98); border-radius:12px; padding:28px; box-shadow:0 10px 30px rgba(2,6,23,0.15); text-align:center; }
-    .logo{ height:48px; margin-bottom:12px; display:inline-block; }
-    h1{ font-size:20px; margin-bottom:12px; color:#07345a; }
-    label{ display:block; text-align:left; font-size:13px; margin-top:8px; color:#475569; }
-    input{ width:100%; padding:10px; margin-top:6px; border-radius:8px; border:1px solid #e2e8f0; }
-    .btn-primary{ width:100%; margin-top:14px; padding:10px; border-radius:8px; border:none; background:#0b63d6; color:white; font-weight:600; cursor:pointer; }
-    .muted{ font-size:13px; color:#64748b; margin-top:12px; }
-    a{ color:#0b63d6; text-decoration:none; }
-    .diag { font-size:12px;color:#fff;margin-top:8px;opacity:0.85 }
+    .logo-wrap{ height:72px; display:flex; align-items:center; justify-content:center; padding-bottom:8px; }
+    .logo{ max-height:64px; width:auto; object-fit:contain; display:block; }
+    h1{ font-size:20px; margin:6px 0 14px; color:#07345a; }
+    form{ text-align:left; }
+    label{ display:block; font-size:13px; color:#475569; margin-top:8px; }
+    input{ width:100%; padding:10px 12px; margin-top:6px; border-radius:8px; border:1px solid #e2e8f0; font-size:14px; }
+    .row{ display:flex; gap:10px; align-items:center; margin-top:12px; }
+    .btn-primary{ width:100%; padding:10px; border-radius:8px; border:none; background:var(--blue); color:#fff; font-weight:600; cursor:pointer; }
+    .muted{ font-size:13px; color:var(--muted); text-align:center; margin-top:12px; }
+    .toggle-link{ color:var(--blue); cursor:pointer; text-decoration:none; }
+    .mode-badge{ display:inline-block; background:#eef8ff; color:var(--blue); padding:6px 10px; border-radius:999px; font-size:13px; margin-bottom:8px;}
+    .small{ font-size:12px; color:#94a3b8; margin-top:8px;}
   </style>
+
+  <!-- Supabase CDN (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 </head>
 <body class="login-bg">
   <div class="page-wrap">
-    <div class="login-card">
-      <img src="opteamix-logo.png" alt="Opteamix logo" class="logo" onerror="this.style.display='none'"/>
-      <h1>Welcome</h1>
+    <div class="login-card" role="main" aria-labelledby="welcomeTitle">
+      <div class="logo-wrap">
+        <!-- If your logo file is missing, it will hide itself -->
+        <img src="opteamix-logo.png" alt="Opteamix logo" class="logo" onerror="this.style.display='none'"/>
+      </div>
 
-      <form id="loginForm">
+      <div style="text-align:center">
+        <div class="mode-badge" id="modeBadge">Sign in</div>
+        <h1 id="welcomeTitle">Welcome to Opteamix LMS</h1>
+      </div>
+
+      <form id="authForm" autocomplete="on">
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" required />
+        <input id="email" name="email" type="email" placeholder="you@company.com" required />
 
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" required />
+        <input id="password" name="password" type="password" placeholder="At least 6 characters" required />
 
-        <button type="submit" class="btn-primary">Login</button>
+        <div class="row">
+          <button type="submit" class="btn-primary" id="submitBtn">Sign in</button>
+        </div>
       </form>
 
-      <p class="muted">
-        Use your email to sign in or
-        <a href="#" id="signupLink">Sign up</a>
+      <p class="muted" style="margin-top:10px">
+        <span id="toggleText">Don't have an account?</span>
+        <a class="toggle-link" id="toggleMode">Sign up</a>
       </p>
 
-      <div class="diag" id="diagBox">Loading Supabase client...</div>
+      <div class="small" id="diag">Status: ready</div>
     </div>
   </div>
 
   <script>
-  /********** CONFIG **********/
-  const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co"; // your project URL
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg"; // your anon key
-  /*****************************/
+  /********* CONFIG - replace these values with YOUR Supabase project details *********/
+  const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co"; // <-- replace if different
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg"; // <-- replace with your anon key
+  /***********************************************************************************/
 
-  const diag = (m) => {
-    console.log(m);
-    const el = document.getElementById('diagBox');
-    if (el) el.textContent = m;
-  };
+  const diagEl = document.getElementById('diag');
+  function diag(msg){ console.log(msg); if (diagEl) diagEl.textContent = 'Status: ' + msg; }
 
-  // Try to load script dynamically and return a Promise that resolves when window.supabase available
-  function loadSupabaseOnce(url){
-    return new Promise((resolve, reject) => {
-      // Already loaded?
-      if (window.supabase && window.supabase.createClient) {
-        diag("Supabase already available");
-        return resolve(window.supabase);
+  // Mode state: 'signin' or 'signup'
+  let mode = 'signin';
+  const modeBadge = document.getElementById('modeBadge');
+  const submitBtn = document.getElementById('submitBtn');
+  const toggleText = document.getElementById('toggleText');
+  const toggleMode = document.getElementById('toggleMode');
+
+  // Try to create supabase client, but be resilient if CDN blocked
+  async function createSupabaseClient() {
+    if (window.supabase && window.supabase.createClient && SUPABASE_URL && SUPABASE_KEY) {
+      diag('Creating Supabase client...');
+      try {
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        diag('Supabase client ready');
+        return client;
+      } catch (e) {
+        console.error('createClient error', e);
       }
-      // create script tag
-      const s = document.createElement('script');
-      s.src = url;
-      s.async = true;
-      s.onload = () => {
-        // slight delay to ensure global exposed
-        setTimeout(()=> {
-          if (window.supabase && window.supabase.createClient) {
-            diag("Loaded Supabase from " + url);
-            resolve(window.supabase);
-          } else {
-            diag("Loaded script but window.supabase not present after load: " + url);
-            reject(new Error('supabase global missing'));
-          }
-        }, 50);
-      };
-      s.onerror = (e) => {
-        diag("Failed to load " + url);
-        reject(e || new Error('Failed to load script'));
-      };
-      document.head.appendChild(s);
-    });
+    }
+    diag('Supabase not available — will use local fallback.');
+    return null;
   }
 
-  // Attempt primary CDN then fallback CDN
-  (async function tryLoadSupabase() {
-    diag("Attempting to load Supabase (primary CDN)...");
-    const primary = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js";
-    const fallback = "https://unpkg.com/@supabase/supabase-js@2/dist/supabase.min.js";
+  (async function init() {
+    const supabase = await createSupabaseClient();
 
-    try {
-      await loadSupabaseOnce(primary);
-    } catch (errPrimary) {
-      console.warn("Primary CDN failed:", errPrimary);
-      diag("Primary CDN failed, trying fallback CDN...");
-      try {
-        await loadSupabaseOnce(fallback);
-      } catch (errFallback) {
-        console.error("Both CDNs failed to load Supabase:", errFallback);
-        diag("Supabase library failed to load from both CDNs. Using local fallback login.");
-        // If both fail, wire local fallback so you can test dashboard locally
-        setupLocalFallback();
+    // Helper user name
+    function userNameFromEmail(email) {
+      try { return encodeURIComponent((email||'').split('@')[0] || 'user'); } catch(e){ return 'user'; }
+    }
+
+    // Auth functions
+    async function doSignUp(email, password) {
+      if (!supabase) {
+        // fallback local demo behavior
+        localStorage.setItem('lms_user_email', email);
+        alert('Local demo: user saved. Now Sign in to continue.');
         return;
       }
-    }
-
-    // Now supabase should be available
-    if (!window.supabase || !window.supabase.createClient) {
-      diag("Supabase global is still missing after CDN loads. Check network or browser blocking.");
-      setupLocalFallback();
-      return;
-    }
-
-    // Create client
-    let supabase;
-    try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      diag("Supabase client created successfully.");
-    } catch (err) {
-      console.error("Failed to create supabase client:", err);
-      diag("Failed to create client. Falling back to local login.");
-      setupLocalFallback();
-      return;
-    }
-
-    // helper username
-    function userNameFromEmail(email){ try { return encodeURIComponent(email.split('@')[0]||'user'); } catch(e){ return 'user'; } }
-
-    // signUp/signIn
-    async function signUp(email, password){
-      try {
-        const { data, error } = await supabase.auth.signUp({ email, password });
-        if (error) { alert('Sign up error: ' + error.message); console.error(error); return; }
-        console.log('SignUp result', data);
-        if (data?.user && !data?.session) {
-          alert('Sign up successful — check email to confirm if required. Then sign in.');
-        } else {
-          alert('Signed up and signed in. Redirecting...');
-          window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
-        }
-      } catch (e) { console.error(e); alert('Sign up failed (see console)'); }
-    }
-
-    async function signIn(email, password){
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) { alert('Login error: ' + error.message); console.error(error); return; }
-        console.log('SignIn result', data);
+      diag('Signing up...');
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        alert('Sign up error: ' + error.message);
+        diag('Sign up failed');
+        console.error(error);
+        return;
+      }
+      diag('Sign up response received');
+      // If email confirmation required, user may need to confirm before sign in
+      if (data?.user && !data?.session) {
+        alert('Sign up successful. Check your email to confirm (if required), then sign in.');
+      } else {
+        alert('Signed up and signed in. Redirecting...');
         window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
-      } catch (e) { console.error(e); alert('Login failed (see console)'); }
+      }
     }
 
-    // attach handlers
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const loginForm = document.getElementById('loginForm');
-      const signupLink = document.getElementById('signupLink');
-      if (loginForm) loginForm.addEventListener('submit', (ev) => {
-        ev.preventDefault();
-        const email = (document.getElementById('email')||{}).value.trim();
-        const password = (document.getElementById('password')||{}).value.trim();
-        if (!email || !password) { alert('Enter email & password'); return; }
-        signIn(email, password);
-      });
-      if (signupLink) signupLink.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        const email = prompt('Enter email for sign up:');
-        if (!email) { alert('Cancelled'); return; }
-        const password = prompt('Choose a password (min 6 chars):');
-        if (!password) { alert('Cancelled'); return; }
-        signUp(email.trim(), password);
-      });
-    });
-  })();
-
-  // Local fallback wiring if Supabase can't be loaded
-  function setupLocalFallback(){
-    diag("Using local fallback login (localStorage).");
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const form = document.getElementById('loginForm');
-      const signupLink = document.getElementById('signupLink');
-      if (form) form.addEventListener('submit', (e)=> {
-        e.preventDefault();
-        const email = (document.getElementById('email')||{}).value || 'Learner';
+    async function doSignIn(email, password) {
+      if (!supabase) {
+        // fallback local demo
         localStorage.setItem('lms_user_email', email);
         window.location.href = 'dashboard.html';
-      });
-      if (signupLink) signupLink.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        const email = prompt('Enter email to register (local demo):');
-        if (!email) { alert('Cancelled'); return; }
-        localStorage.setItem('lms_user_email', email);
-        alert('Local demo user saved. Click Login to proceed.');
-      });
+        return;
+      }
+      diag('Signing in...');
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        // common: email not confirmed
+        alert('Login error: ' + error.message + (error.message.toLowerCase().includes('email') ? '\nCheck your email to confirm.' : ''));
+        diag('Sign in failed');
+        console.error(error);
+        return;
+      }
+      diag('Sign in success');
+      window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
+    }
+
+    // Wire form submit
+    document.getElementById('authForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = (document.getElementById('email')||{}).value.trim();
+      const password = (document.getElementById('password')||{}).value.trim();
+      if (!email || !password) { alert('Please enter email and password'); return; }
+      if (mode === 'signin') {
+        doSignIn(email, password);
+      } else {
+        // signup mode
+        if (password.length < 6) {
+          alert('Password must be at least 6 characters');
+          return;
+        }
+        doSignUp(email, password);
+      }
     });
-  }
+
+    // Toggle sign in / sign up
+    toggleMode.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (mode === 'signin') {
+        mode = 'signup';
+        modeBadge.textContent = 'Sign up';
+        submitBtn.textContent = 'Create account';
+        toggleText.textContent = 'Already have an account?';
+        toggleMode.textContent = 'Sign in';
+      } else {
+        mode = 'signin';
+        modeBadge.textContent = 'Sign in';
+        submitBtn.textContent = 'Sign in';
+        toggleText.textContent = "Don't have an account?";
+        toggleMode.textContent = 'Sign up';
+      }
+    });
+
+    // initial UI
+    mode = 'signin';
+    modeBadge.textContent = 'Sign in';
+    submitBtn.textContent = 'Sign in';
+    toggleText.textContent = "Don't have an account?";
+    toggleMode.textContent = 'Sign up';
+
+  })();
   </script>
 </body>
 </html>
