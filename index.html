@@ -31,13 +31,14 @@
   <script type="module">
     import { createClient } from './supabase-wrapper.js';
 
-    // ==== replace these if your project values are different (you already have these) ====
+    // ====== CONFIG: replace with your Supabase values if different ======
     const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg";
-    // ======================================================================================
+    // ====================================================================
 
     try {
       const client = createClient(SUPABASE_URL, SUPABASE_KEY);
+      // attach globally for non-module scripts
       window.supabase = client;
       console.log("✅ Supabase client created and attached to window.supabase");
     } catch (err) {
@@ -80,6 +81,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
+    /***** helper UI *****/
     const toastEl = document.getElementById('toast');
     function showToast(msg, ms = 3000) {
       toastEl.textContent = msg;
@@ -96,17 +98,34 @@
     const toggleMode = document.getElementById('toggleMode');
     const subtitle = document.getElementById('subtitle');
 
-    async function getSupabase() {
-      if (window.supabase && typeof window.supabase.auth !== 'undefined') {
-        diag('Supabase client ready');
-        return window.supabase;
+    /***** waitForSupabase & robust create *****/
+    async function waitForSupabase(timeoutMs = 3000, intervalMs = 100) {
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        if (window.supabase && typeof window.supabase.auth !== 'undefined') return window.supabase;
+        await new Promise(r => setTimeout(r, intervalMs));
       }
-      diag('Supabase client not available, using local fallback');
       return null;
     }
 
+    async function createSupabaseClient() {
+      // immediate check
+      if (window.supabase && typeof window.supabase.auth !== 'undefined') {
+        diag('Supabase client available immediately');
+        return window.supabase;
+      }
+      // wait shortly for module to initialize
+      diag('Waiting briefly for Supabase client to initialize...');
+      const sup = await waitForSupabase(3000, 100);
+      if (sup) { diag('Supabase client became available'); return sup; }
+      // fallback
+      diag('Supabase not available — using local fallback.');
+      return null;
+    }
+
+    /***** main init *****/
     (async function init(){
-      const supabase = await getSupabase();
+      const supabase = await createSupabaseClient();
 
       function setMode(m) {
         mode = m;
@@ -134,7 +153,6 @@
           setMode('signin');
           return;
         }
-
         diag('Attempting sign up for ' + email);
         try {
           const { data, error } = await supabase.auth.signUp({ email, password });
@@ -143,7 +161,6 @@
             alert('Sign up error: ' + error.message);
             return;
           }
-
           console.log('SignUp response', data);
           alert('✅ Account created! Please sign in now.');
           setMode('signin');
@@ -160,7 +177,6 @@
           window.location.href = 'dashboard.html';
           return;
         }
-
         diag('Attempting sign in for ' + email);
         try {
           const { data, error } = await supabase.auth.signInWithPassword({ email, password });
