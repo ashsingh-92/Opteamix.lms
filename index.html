@@ -32,14 +32,12 @@
   <script type="module">
     import { createClient } from './supabase-wrapper.js';
 
-    // ====== CONFIG: replace with your Supabase values ======
     const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg";
-    // =======================================================
 
     try {
       const client = createClient(SUPABASE_URL, SUPABASE_KEY);
-      window.supabase = client; // attach globally
+      window.supabase = client;
       console.log("✅ Supabase client created and attached to window.supabase");
     } catch (err) {
       console.error("❌ Failed to create Supabase client", err);
@@ -79,7 +77,7 @@
     </div>
   </div>
 
-  <!-- Non-module login/signup logic -->
+  <!-- Login logic -->
   <script>
     const diagEl = document.getElementById('diag');
     function diag(msg){ console.log(msg); if (diagEl) diagEl.textContent = 'Status: ' + msg; }
@@ -115,11 +113,17 @@
         diag('Signing up...');
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) { alert('Sign up error: ' + error.message); return; }
-        if (data?.user && !data?.session) {
-          alert('Sign up successful. Check your email to confirm, then sign in.');
+
+        if (data?.user) {
+          // ✅ New flow: show message and switch to Sign in
+          alert('✅ Account created! You can now sign in.');
+          mode = 'signin';
+          modeBadge.textContent = 'Sign in';
+          submitBtn.textContent = 'Sign in';
+          toggleText.textContent = "Don't have an account?";
+          toggleMode.textContent = 'Sign up';
         } else {
-          alert('Signed up and signed in. Redirecting...');
-          window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
+          alert('Something went wrong during sign up.');
         }
       }
 
