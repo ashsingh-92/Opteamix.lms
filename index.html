@@ -3,14 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Opteamix LMS — Login</title>
-
-  <!-- Primary stylesheet (your file). If missing, the small inline fallback below will keep the page usable. -->
+  <title>Opteamix LMS — Login (diagnostic)</title>
   <link rel="stylesheet" href="login.css" />
-
-  <!-- Small inline fallback CSS so missing login.css won't break layout while testing -->
   <style>
-    /* minimal fallback styles (only used if login.css missing) */
     body.login-bg{ font-family: Inter, system-ui, Arial, sans-serif; background: linear-gradient(180deg,#0b63d6,#0b7be6); min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center; }
     .page-wrap{ width:100%; max-width:420px; padding:24px; }
     .login-card{ background:rgba(255,255,255,0.98); border-radius:12px; padding:28px; box-shadow:0 10px 30px rgba(2,6,23,0.15); text-align:center; }
@@ -21,15 +16,12 @@
     .btn-primary{ width:100%; margin-top:14px; padding:10px; border-radius:8px; border:none; background:#0b63d6; color:white; font-weight:600; cursor:pointer; }
     .muted{ font-size:13px; color:#64748b; margin-top:12px; }
     a{ color:#0b63d6; text-decoration:none; }
+    .diag { font-size:12px;color:#fff;margin-top:8px;opacity:0.85 }
   </style>
-
-  <!-- Correct Supabase CDN (v2) - must be present before our script -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 </head>
 <body class="login-bg">
   <div class="page-wrap">
     <div class="login-card">
-      <!-- If image missing, browser will hide it due to onerror -->
       <img src="opteamix-logo.png" alt="Opteamix logo" class="logo" onerror="this.style.display='none'"/>
       <h1>Welcome</h1>
 
@@ -47,147 +39,166 @@
         Use your email to sign in or
         <a href="#" id="signupLink">Sign up</a>
       </p>
+
+      <div class="diag" id="diagBox">Loading Supabase client...</div>
     </div>
   </div>
 
-  <!-- ===== LOGIN SCRIPT: replace SUPABASE_URL and SUPABASE_KEY with your values ===== -->
   <script>
-    /* ==== CONFIG: paste your Supabase values below ==== */
-    const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co"; // <-- you confirmed this
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg"; // <-- your anon key
-    /* ======================================================= */
+  /********** CONFIG **********/
+  const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co"; // your project URL
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg"; // your anon key
+  /*****************************/
 
-    // Defensive checks and helpful console messages
-    (function() {
-      // Check that the Supabase library loaded
-      if (!window.supabase || !window.supabase.createClient) {
-        console.error("Supabase client library not found or failed to load. Make sure the CDN <script> is present and not blocked.");
-        alert("Supabase library not loaded. Check console. If you're offline, use local demo fallback.");
-        // Provide a fallback local login behavior so you can still test the dashboard
-        fallbackLocalLogin();
-        return;
+  const diag = (m) => {
+    console.log(m);
+    const el = document.getElementById('diagBox');
+    if (el) el.textContent = m;
+  };
+
+  // Try to load script dynamically and return a Promise that resolves when window.supabase available
+  function loadSupabaseOnce(url){
+    return new Promise((resolve, reject) => {
+      // Already loaded?
+      if (window.supabase && window.supabase.createClient) {
+        diag("Supabase already available");
+        return resolve(window.supabase);
       }
-
-      // Ensure keys are present (not placeholders)
-      if (!SUPABASE_URL || SUPABASE_URL.includes("YOUR_PROJECT_ID") || !SUPABASE_KEY || SUPABASE_KEY.includes("YOUR_ANON_PUBLIC_KEY")) {
-        console.warn("Supabase keys appear missing or placeholder. Using local demo fallback so you can still test the dashboard locally.");
-        fallbackLocalLogin();
-        return;
-      }
-
-      // Create supabase client
-      let supabase;
-      try {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        console.log("Supabase client created.");
-      } catch (err) {
-        console.error("Failed to create Supabase client:", err);
-        fallbackLocalLogin();
-        return;
-      }
-
-      // Helper to create safe username
-      function userNameFromEmail(email) {
-        try { return encodeURIComponent((email||'').split('@')[0] || 'user'); } catch(e){ return 'user'; }
-      }
-
-      // Sign up function
-      async function signUp(email, password) {
-        try {
-          const { data, error } = await supabase.auth.signUp({ email, password });
-          if (error) {
-            alert("Sign up error: " + error.message);
-            console.error("SignUp error:", error);
-            return;
-          }
-          console.log("SignUp result:", data);
-          if (data?.user && !data?.session) {
-            alert("Sign up successful! If email confirmation is enabled, check your inbox. Then sign in.");
+      // create script tag
+      const s = document.createElement('script');
+      s.src = url;
+      s.async = true;
+      s.onload = () => {
+        // slight delay to ensure global exposed
+        setTimeout(()=> {
+          if (window.supabase && window.supabase.createClient) {
+            diag("Loaded Supabase from " + url);
+            resolve(window.supabase);
           } else {
-            alert("Sign up successful and signed in. Redirecting...");
-            window.location.href = `dashboard.html?user=${userNameFromEmail(email)}`;
+            diag("Loaded script but window.supabase not present after load: " + url);
+            reject(new Error('supabase global missing'));
           }
-        } catch (err) {
-          console.error("Unexpected signUp error:", err);
-          alert("Unexpected sign up error — check console.");
-        }
+        }, 50);
+      };
+      s.onerror = (e) => {
+        diag("Failed to load " + url);
+        reject(e || new Error('Failed to load script'));
+      };
+      document.head.appendChild(s);
+    });
+  }
+
+  // Attempt primary CDN then fallback CDN
+  (async function tryLoadSupabase() {
+    diag("Attempting to load Supabase (primary CDN)...");
+    const primary = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js";
+    const fallback = "https://unpkg.com/@supabase/supabase-js@2/dist/supabase.min.js";
+
+    try {
+      await loadSupabaseOnce(primary);
+    } catch (errPrimary) {
+      console.warn("Primary CDN failed:", errPrimary);
+      diag("Primary CDN failed, trying fallback CDN...");
+      try {
+        await loadSupabaseOnce(fallback);
+      } catch (errFallback) {
+        console.error("Both CDNs failed to load Supabase:", errFallback);
+        diag("Supabase library failed to load from both CDNs. Using local fallback login.");
+        // If both fail, wire local fallback so you can test dashboard locally
+        setupLocalFallback();
+        return;
       }
-
-      // Sign in function
-      async function signIn(email, password) {
-        try {
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) {
-            // helpful hint if email needs confirmation
-            if (error.message && error.message.toLowerCase().includes('email')) {
-              alert("Login error: " + error.message + "\nIf you recently signed up, check your email to confirm.");
-            } else {
-              alert("Login error: " + error.message);
-            }
-            console.error("SignIn error:", error);
-            return;
-          }
-          console.log("SignIn result:", data);
-          window.location.href = `dashboard.html?user=${userNameFromEmail(email)}`;
-        } catch (err) {
-          console.error("Unexpected signIn error:", err);
-          alert("Unexpected sign in error — check console.");
-        }
-      }
-
-      // Attach handlers when DOM ready
-      document.addEventListener('DOMContentLoaded', () => {
-        const loginForm = document.getElementById('loginForm');
-        const signupLink = document.getElementById('signupLink');
-
-        if (loginForm) {
-          loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = (document.getElementById('email')||{}).value.trim();
-            const password = (document.getElementById('password')||{}).value.trim();
-            if (!email || !password) { alert('Enter email & password'); return; }
-            signIn(email, password);
-          });
-        }
-
-        if (signupLink) {
-          signupLink.addEventListener('click', (ev) => {
-            ev.preventDefault();
-            const email = prompt('Enter email for sign up (example: you@company.com):');
-            if (!email) { alert('Signup cancelled'); return; }
-            const password = prompt('Choose a password (min 6 chars):');
-            if (!password) { alert('Signup cancelled'); return; }
-            signUp(email.trim(), password);
-          });
-        }
-      });
-    })();
-
-    // ===== Fallback local demo login (only used if Supabase not available or keys missing) =====
-    function fallbackLocalLogin(){
-      console.warn("Using local fallback login (localStorage).");
-      document.addEventListener('DOMContentLoaded', ()=>{
-        const form = document.getElementById('loginForm');
-        if (form){
-          form.addEventListener('submit', (e)=>{
-            e.preventDefault();
-            const email = (document.getElementById('email')||{}).value || 'Learner';
-            localStorage.setItem('lms_user_email', email);
-            window.location.href = 'dashboard.html';
-          });
-        }
-        const signupLink = document.getElementById('signupLink');
-        if (signupLink){
-          signupLink.addEventListener('click', (ev)=> {
-            ev.preventDefault();
-            const email = prompt('Enter email to register (local demo):');
-            if (!email) { alert('Cancelled'); return; }
-            localStorage.setItem('lms_user_email', email);
-            alert('Local demo user saved. Click Login to proceed.');
-          });
-        }
-      });
     }
+
+    // Now supabase should be available
+    if (!window.supabase || !window.supabase.createClient) {
+      diag("Supabase global is still missing after CDN loads. Check network or browser blocking.");
+      setupLocalFallback();
+      return;
+    }
+
+    // Create client
+    let supabase;
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      diag("Supabase client created successfully.");
+    } catch (err) {
+      console.error("Failed to create supabase client:", err);
+      diag("Failed to create client. Falling back to local login.");
+      setupLocalFallback();
+      return;
+    }
+
+    // helper username
+    function userNameFromEmail(email){ try { return encodeURIComponent(email.split('@')[0]||'user'); } catch(e){ return 'user'; } }
+
+    // signUp/signIn
+    async function signUp(email, password){
+      try {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) { alert('Sign up error: ' + error.message); console.error(error); return; }
+        console.log('SignUp result', data);
+        if (data?.user && !data?.session) {
+          alert('Sign up successful — check email to confirm if required. Then sign in.');
+        } else {
+          alert('Signed up and signed in. Redirecting...');
+          window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
+        }
+      } catch (e) { console.error(e); alert('Sign up failed (see console)'); }
+    }
+
+    async function signIn(email, password){
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) { alert('Login error: ' + error.message); console.error(error); return; }
+        console.log('SignIn result', data);
+        window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
+      } catch (e) { console.error(e); alert('Login failed (see console)'); }
+    }
+
+    // attach handlers
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const loginForm = document.getElementById('loginForm');
+      const signupLink = document.getElementById('signupLink');
+      if (loginForm) loginForm.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const email = (document.getElementById('email')||{}).value.trim();
+        const password = (document.getElementById('password')||{}).value.trim();
+        if (!email || !password) { alert('Enter email & password'); return; }
+        signIn(email, password);
+      });
+      if (signupLink) signupLink.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const email = prompt('Enter email for sign up:');
+        if (!email) { alert('Cancelled'); return; }
+        const password = prompt('Choose a password (min 6 chars):');
+        if (!password) { alert('Cancelled'); return; }
+        signUp(email.trim(), password);
+      });
+    });
+  })();
+
+  // Local fallback wiring if Supabase can't be loaded
+  function setupLocalFallback(){
+    diag("Using local fallback login (localStorage).");
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const form = document.getElementById('loginForm');
+      const signupLink = document.getElementById('signupLink');
+      if (form) form.addEventListener('submit', (e)=> {
+        e.preventDefault();
+        const email = (document.getElementById('email')||{}).value || 'Learner';
+        localStorage.setItem('lms_user_email', email);
+        window.location.href = 'dashboard.html';
+      });
+      if (signupLink) signupLink.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const email = prompt('Enter email to register (local demo):');
+        if (!email) { alert('Cancelled'); return; }
+        localStorage.setItem('lms_user_email', email);
+        alert('Local demo user saved. Click Login to proceed.');
+      });
+    });
+  }
   </script>
 </body>
 </html>
