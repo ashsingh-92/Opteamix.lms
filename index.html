@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Opteamix LMS — Login</title>
   <link rel="stylesheet" href="login.css" />
+
+  <!-- Supabase JS client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 </head>
 <body class="login-bg">
   <div class="page-wrap">
@@ -22,16 +25,62 @@
         <button type="submit" class="btn-primary">Login</button>
       </form>
 
-      <p class="muted">Use any email to continue (demo mode)</p>
+      <p class="muted">Use your email to sign in or <a href="#" id="signupLink">Sign up</a></p>
     </div>
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e){
+    // === CONFIG: Paste your Supabase values here ===
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co"; // Settings > API > Project URL
+    const SUPABASE_KEY = "YOUR_ANON_PUBLIC_KEY";               // Settings > API > anon key
+    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Helper: redirect to dashboard with user name in URL
+    function redirectToDashboard(email) {
+      const safeName = encodeURIComponent(email.split('@')[0] || 'user');
+      window.location.href = `dashboard.html?user=${safeName}`;
+    }
+
+    // Sign up
+    async function signUp(email, password) {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        alert("Sign up error: " + error.message);
+        return;
+      }
+      alert("Sign up successful! Please check your email to confirm (if required), then log in.");
+    }
+
+    // Sign in
+    async function signIn(email, password) {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        alert("Login error: " + error.message);
+        return;
+      }
+      redirectToDashboard(email);
+    }
+
+    // Handle login form submit
+    document.getElementById("loginForm").addEventListener("submit", function(e){
       e.preventDefault();
-      const email = document.getElementById('email').value || 'Learner';
-      localStorage.setItem('lms_user_email', email);
-      window.location.href = 'dashboard.html';
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (!email || !password) {
+        alert("Please enter email and password");
+        return;
+      }
+      signIn(email, password);
+    });
+
+    // Handle signup link click
+    document.getElementById("signupLink").addEventListener("click", function(e){
+      e.preventDefault();
+      const email = prompt("Enter your email to sign up:");
+      const password = prompt("Choose a password (min 6 characters):");
+      if (email && password) {
+        signUp(email, password);
+      }
     });
   </script>
 </body>
