@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Opteamix LMS — Login</title>
 
-  <!-- Use your real login.css if you have one -->
+  <!-- Your real stylesheet -->
   <link rel="stylesheet" href="login.css" />
 
-  <!-- Minimal fallback styles so page remains usable even if login.css missing -->
+  <!-- Minimal fallback styles if login.css is missing -->
   <style>
     :root{--blue:#0b63d6;--muted:#64748b}
     body.login-bg{ font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#0b63d6 0%,#0b7be6 100%); min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center; padding:24px;}
@@ -28,14 +28,32 @@
     .small{ font-size:12px; color:#94a3b8; margin-top:8px;}
   </style>
 
-  <!-- Supabase CDN (v2) -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- -------------------------
+       IMPORTANT: Supabase v2 (ESM)
+       We import createClient from the +esm CDN and attach it to window.supabase
+       so non-module scripts below can access it as window.supabase.
+       ------------------------- -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.2/+esm';
+
+    // ====== CONFIG: replace these with your project's values ======
+    const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg";
+    // ===============================================================
+
+    try {
+      window.supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      console.log('Supabase client created and attached to window.supabase');
+    } catch (err) {
+      console.error('Failed to create Supabase client in module loader', err);
+      // leave window.supabase undefined — the non-module script will fallback to local demo
+    }
+  </script>
 </head>
 <body class="login-bg">
   <div class="page-wrap">
     <div class="login-card" role="main" aria-labelledby="welcomeTitle">
       <div class="logo-wrap">
-        <!-- If your logo file is missing, it will hide itself -->
         <img src="opteamix-logo.png" alt="Opteamix logo" class="logo" onerror="this.style.display='none'"/>
       </div>
 
@@ -65,12 +83,9 @@
     </div>
   </div>
 
+  <!-- non-module script (uses window.supabase created above) -->
   <script>
-  /********* CONFIG - replace these values with YOUR Supabase project details *********/
-  const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co"; // <-- replace if different
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg"; // <-- replace with your anon key
-  /***********************************************************************************/
-
+  /********* (No change required here unless you want to edit config) *********/
   const diagEl = document.getElementById('diag');
   function diag(msg){ console.log(msg); if (diagEl) diagEl.textContent = 'Status: ' + msg; }
 
@@ -81,17 +96,11 @@
   const toggleText = document.getElementById('toggleText');
   const toggleMode = document.getElementById('toggleMode');
 
-  // Try to create supabase client, but be resilient if CDN blocked
+  // createSupabaseClient now checks window.supabase (created by the module above)
   async function createSupabaseClient() {
-    if (window.supabase && window.supabase.createClient && SUPABASE_URL && SUPABASE_KEY) {
-      diag('Creating Supabase client...');
-      try {
-        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        diag('Supabase client ready');
-        return client;
-      } catch (e) {
-        console.error('createClient error', e);
-      }
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      diag('Supabase client available on window');
+      return window.supabase;
     }
     diag('Supabase not available — will use local fallback.');
     return null;
@@ -122,7 +131,6 @@
         return;
       }
       diag('Sign up response received');
-      // If email confirmation required, user may need to confirm before sign in
       if (data?.user && !data?.session) {
         alert('Sign up successful. Check your email to confirm (if required), then sign in.');
       } else {
@@ -141,7 +149,6 @@
       diag('Signing in...');
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        // common: email not confirmed
         alert('Login error: ' + error.message + (error.message.toLowerCase().includes('email') ? '\nCheck your email to confirm.' : ''));
         diag('Sign in failed');
         console.error(error);
@@ -198,5 +205,3 @@
   </script>
 </body>
 </html>
-
-
