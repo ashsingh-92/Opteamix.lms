@@ -5,18 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Opteamix LMS — Login</title>
 
-  <!-- Optional external stylesheet -->
   <link rel="stylesheet" href="login.css" />
 
-  <!-- Minimal fallback styles -->
   <style>
     :root{--blue:#0b63d6;--muted:#64748b}
     body.login-bg{ font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#0b63d6 0%,#0b7be6 100%); min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center; padding:24px;}
     .page-wrap{ width:100%; max-width:480px; }
     .login-card{ background:rgba(255,255,255,0.98); border-radius:12px; padding:28px; box-shadow:0 10px 30px rgba(2,6,23,0.15); text-align:center; }
-    .logo-wrap{ height:72px; display:flex; align-items:center; justify-content:center; padding-bottom:8px; }
+    .logo-wrap{ height:72px; display:flex; align-items:center; justify-content:center; padding-bottom:6px; }
     .logo{ max-height:64px; width:auto; object-fit:contain; display:block; }
-    h1{ font-size:20px; margin:6px 0 14px; color:#07345a; }
+    h1{ font-size:20px; margin:6px 0 10px; color:#07345a; }
+    .subtitle{ font-size:14px; color:#475569; margin-bottom:10px; }
     form{ text-align:left; }
     label{ display:block; font-size:13px; color:#475569; margin-top:8px; }
     input{ width:100%; padding:10px 12px; margin-top:6px; border-radius:8px; border:1px solid #e2e8f0; font-size:14px; }
@@ -24,16 +23,18 @@
     .btn-primary{ width:100%; padding:10px; border-radius:8px; border:none; background:var(--blue); color:#fff; font-weight:600; cursor:pointer; }
     .muted{ font-size:13px; color:var(--muted); text-align:center; margin-top:12px; }
     .toggle-link{ color:var(--blue); cursor:pointer; text-decoration:none; }
-    .mode-badge{ display:inline-block; background:#eef8ff; color:var(--blue); padding:6px 10px; border-radius:999px; font-size:13px; margin-bottom:8px;}
-    .small{ font-size:12px; color:#94a3b8; margin-top:8px;}
+    .small{ font-size:12px; color:#94a3b8; margin-top:8px; text-align:center; }
+    .toast { position: fixed; left:50%; transform:translateX(-50%); bottom:24px; background:#0b63d6; color:#fff; padding:10px 16px; border-radius:8px; box-shadow:0 6px 18px rgba(2,6,23,0.2); display:none; z-index:1000; }
   </style>
 
-  <!-- Use wrapper to import Supabase client -->
+  <!-- IMPORT: wrapper must exist in repo root -->
   <script type="module">
     import { createClient } from './supabase-wrapper.js';
 
+    // ==== replace these if your project values are different (you already have these) ====
     const SUPABASE_URL = "https://kbyhxnhdhcgnqxmnaall.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWh4bmhkaGNnbnF4bW5hYWxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTExMTAsImV4cCI6MjA3Mjg4NzExMH0.1ThGFsixhHTy7YrSDgH0RTEPaw19Z2LbPABrFb4i0bg";
+    // ======================================================================================
 
     try {
       const client = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -44,6 +45,7 @@
     }
   </script>
 </head>
+
 <body class="login-bg">
   <div class="page-wrap">
     <div class="login-card" role="main" aria-labelledby="welcomeTitle">
@@ -51,10 +53,8 @@
         <img src="opteamix-logo.png" alt="Opteamix logo" class="logo" onerror="this.style.display='none'"/>
       </div>
 
-      <div style="text-align:center">
-        <div class="mode-badge" id="modeBadge">Sign in</div>
-        <h1 id="welcomeTitle">Welcome to Opteamix LMS</h1>
-      </div>
+      <h1 id="welcomeTitle">Welcome to Opteamix LMS</h1>
+      <div class="subtitle" id="subtitle">Sign in to continue</div>
 
       <form id="authForm" autocomplete="on">
         <label for="email">Email</label>
@@ -77,28 +77,51 @@
     </div>
   </div>
 
-  <!-- Login logic -->
+  <div class="toast" id="toast"></div>
+
   <script>
+    const toastEl = document.getElementById('toast');
+    function showToast(msg, ms = 3000) {
+      toastEl.textContent = msg;
+      toastEl.style.display = 'block';
+      setTimeout(()=> { toastEl.style.display = 'none'; }, ms);
+    }
+
     const diagEl = document.getElementById('diag');
     function diag(msg){ console.log(msg); if (diagEl) diagEl.textContent = 'Status: ' + msg; }
 
     let mode = 'signin';
-    const modeBadge = document.getElementById('modeBadge');
     const submitBtn = document.getElementById('submitBtn');
     const toggleText = document.getElementById('toggleText');
     const toggleMode = document.getElementById('toggleMode');
+    const subtitle = document.getElementById('subtitle');
 
-    async function createSupabaseClient() {
-      if (window.supabase) {
-        diag('Supabase client available');
+    async function getSupabase() {
+      if (window.supabase && typeof window.supabase.auth !== 'undefined') {
+        diag('Supabase client ready');
         return window.supabase;
       }
-      diag('Supabase not available — using local fallback.');
+      diag('Supabase client not available, using local fallback');
       return null;
     }
 
-    (async function init() {
-      const supabase = await createSupabaseClient();
+    (async function init(){
+      const supabase = await getSupabase();
+
+      function setMode(m) {
+        mode = m;
+        if (mode === 'signin') {
+          submitBtn.textContent = 'Sign in';
+          toggleText.textContent = "Don't have an account?";
+          toggleMode.textContent = 'Sign up';
+          subtitle.textContent = 'Sign in to continue';
+        } else {
+          submitBtn.textContent = 'Create account';
+          toggleText.textContent = 'Already have an account?';
+          toggleMode.textContent = 'Sign in';
+          subtitle.textContent = 'Create a new account';
+        }
+      }
 
       function userNameFromEmail(email) {
         try { return encodeURIComponent((email||'').split('@')[0] || 'user'); } catch(e){ return 'user'; }
@@ -107,23 +130,27 @@
       async function doSignUp(email, password) {
         if (!supabase) {
           localStorage.setItem('lms_user_email', email);
-          alert('Local demo: user saved. Now Sign in to continue.');
+          showToast('Local demo: account created (demo)');
+          setMode('signin');
           return;
         }
-        diag('Signing up...');
-        const { data, error } = await supabase.auth.signUp({ email, password });
-        if (error) { alert('Sign up error: ' + error.message); return; }
 
-        if (data?.user) {
-          // ✅ New flow: show message and switch to Sign in
-          alert('✅ Account created! You can now sign in.');
-          mode = 'signin';
-          modeBadge.textContent = 'Sign in';
-          submitBtn.textContent = 'Sign in';
-          toggleText.textContent = "Don't have an account?";
-          toggleMode.textContent = 'Sign up';
-        } else {
-          alert('Something went wrong during sign up.');
+        diag('Attempting sign up for ' + email);
+        try {
+          const { data, error } = await supabase.auth.signUp({ email, password });
+          if (error) {
+            console.error('SignUp error', error);
+            alert('Sign up error: ' + error.message);
+            return;
+          }
+
+          console.log('SignUp response', data);
+          alert('✅ Account created! Please sign in now.');
+          setMode('signin');
+          document.getElementById('email').focus();
+        } catch (err) {
+          console.error('Unexpected signUp error', err);
+          alert('Unexpected error during sign up. See console.');
         }
       }
 
@@ -133,17 +160,29 @@
           window.location.href = 'dashboard.html';
           return;
         }
-        diag('Signing in...');
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) { alert('Login error: ' + error.message); return; }
-        window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
+
+        diag('Attempting sign in for ' + email);
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) {
+            console.error('SignIn error', error);
+            alert('Login error: ' + error.message);
+            return;
+          }
+          diag('Sign in successful');
+          window.location.href = 'dashboard.html?user=' + userNameFromEmail(email);
+        } catch (err) {
+          console.error('Unexpected signIn error', err);
+          alert('Unexpected error during sign in. See console.');
+        }
       }
 
-      document.getElementById('authForm').addEventListener('submit', (e) => {
+      document.getElementById('authForm').addEventListener('submit', function(e){
         e.preventDefault();
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
         if (!email || !password) { alert('Please enter email and password'); return; }
+
         if (mode === 'signin') {
           doSignIn(email, password);
         } else {
@@ -152,22 +191,12 @@
         }
       });
 
-      toggleMode.addEventListener('click', (e) => {
+      toggleMode.addEventListener('click', function(e){
         e.preventDefault();
-        if (mode === 'signin') {
-          mode = 'signup';
-          modeBadge.textContent = 'Sign up';
-          submitBtn.textContent = 'Create account';
-          toggleText.textContent = 'Already have an account?';
-          toggleMode.textContent = 'Sign in';
-        } else {
-          mode = 'signin';
-          modeBadge.textContent = 'Sign in';
-          submitBtn.textContent = 'Sign in';
-          toggleText.textContent = "Don't have an account?";
-          toggleMode.textContent = 'Sign up';
-        }
+        setMode(mode === 'signin' ? 'signup' : 'signin');
       });
+
+      setMode('signin');
     })();
   </script>
 </body>
